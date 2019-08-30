@@ -219,7 +219,8 @@ foreach my $mirror (@ARGV) {
                         push @extra, "$extra[0]/v$1";
                 }
                 foreach my $dir (@extra) {
-                        push @mirrors, "https://linux-libre.fsfla.org/pub/linux-libre/releases/$dir";
+			push @mirrors, "https://linux-libre.fsfla.org/pub/linux-libre/releases/$dir";
+			push @mirrors, "https://librecmc.org/pub/linux-libre/releases/$dir";
                 }
     } elsif ($mirror =~ /^\@GNOME\/(.+)$/) {
 		push @mirrors, "https://mirror.csclub.uwaterloo.ca/gnome/sources/$1";
