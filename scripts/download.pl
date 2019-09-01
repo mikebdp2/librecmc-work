@@ -242,6 +242,17 @@ foreach my $mirror (@ARGV) {
 			push @mirrors, "ftp://ftp.riken.jp/Linux/kernel.org/$dir";
 			push @mirrors, "ftp://www.mirrorservice.org/sites/ftp.kernel.org/pub/$dir";
 		}
+    } elsif ($mirror =~ /^\@KERNEL_LIBRE\/(.+)$/) {
+                my @extra = ( $1 );
+                if ($filename =~ /linux-libre-\d+\.\d+(?:\.\d+)?-rc-gnu/) {
+                        push @extra, "$extra[0]/testing";
+                } elsif ($filename =~ /linux-libre-(\d+\.\d+(?:\.\d+)?)-gnu/) {
+                        push @extra, "$extra[0]/v$1";
+                }
+                foreach my $dir (@extra) {
+                        push @mirrors, "https://linux-libre.fsfla.org/pub/linux-libre/releases/$dir";
+                        push @mirrors, "https://librecmc.org/pub/linux-libre/releases/$dir";
+                }
     } elsif ($mirror =~ /^\@GNOME\/(.+)$/) {
 		push @mirrors, "https://mirror.csclub.uwaterloo.ca/gnome/sources/$1";
 		push @mirrors, "http://ftp.acc.umu.se/pub/GNOME/sources/$1";
