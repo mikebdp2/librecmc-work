@@ -184,14 +184,11 @@ define Device/cf-e320n-v2
 endef
 TARGET_DEVICES += cf-e320n-v2
 
-define Device/cf-e380ac-v2
-  $(Device/cf-e380ac-v1)
-  DEVICE_TITLE := COMFAST CF-E380AC v2
-  BOARDNAME := CF-E380AC-V2
-  IMAGE_SIZE := 16000k
-  MTDPARTS := spi0.0:256k(u-boot)ro,64k(art)ro,16000k(firmware),64k(art-backup)ro
-endef
-TARGET_DEVICES += cf-e380ac-v2
+
+
+
+
+
 
 define Device/cf-e520n
   DEVICE_TITLE := COMFAST CF-E520N
@@ -244,12 +241,7 @@ define Device/dragino2
 endef
 TARGET_DEVICES += dragino2
 
-define Device/e1700ac-v2-8M
-  $(Device/e1700ac-v2-16M)
-  DEVICE_TITLE := Qxwlan E1700AC v2 (8MB flash)
-  IMAGE_SIZE := 7744k
-endef
-TARGET_DEVICES += e1700ac-v2-8M
+
 
 define Device/e558-v2-16M
   DEVICE_TITLE := Qxwlan E558 v2 (16MB flash)
@@ -289,12 +281,7 @@ define Device/e600g-v2-8M
 endef
 TARGET_DEVICES += e600g-v2-8M
 
-define Device/e600gac-v2-8M
-  $(Device/e600gac-v2-16M)
-  DEVICE_TITLE := Qxwlan E600GAC v2 (8MB flash)
-  IMAGE_SIZE := 7744k
-endef
-TARGET_DEVICES += e600gac-v2-8M
+
 
 define Device/e750a-v4-16M
   DEVICE_TITLE := Qxwlan E750A v4 (16MB flash)
@@ -734,6 +721,7 @@ define Device/jwap230
 endef
 TARGET_DEVICES += jwap230
 
+
 define Device/r36a
   DEVICE_TITLE := ALFA Network R36A
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport -swconfig
@@ -777,6 +765,16 @@ define Device/rut900
 endef
 TARGET_DEVICES += rut900
 
+
+
+
+
+
+
+
+
+
+
 define Device/minibox-v1
   $(Device/tplink-16mlzma)
   DEVICE_TITLE := GainStrong MiniBox V1.0
@@ -789,6 +787,16 @@ define Device/minibox-v1
 endef
 TARGET_DEVICES += minibox-v1
 
+define Device/minibox-v3.2
+  $(Device/tplink-16mlzma)
+  DEVICE_TITLE := Gainstrong MiniBox V3.2
+  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport -swconfig
+  BOARDNAME := MINIBOX-V3.2
+  DEVICE_PROFILE := MINIBOXV32
+  TPLINK_HWID := 0x3C00010C
+endef
+TARGET_DEVICES += minibox-v3.2
+
 define Device/oolite-v1
   $(Device/minibox-v1)
   DEVICE_TITLE := GainStrong Oolite V1.0
@@ -798,13 +806,7 @@ define Device/oolite-v1
 endef
 TARGET_DEVICES += oolite-v1
 
-define Device/oolite-v5.2-dev
-  $(Device/oolite-v5.2)
-  DEVICE_TITLE := GainStrong Oolite V5.2-Dev (development board)
-  BOARDNAME := OOLITE-V5-2-DEV
-  DEVICE_PROFILE := OOLITEV52DEV
-endef
-TARGET_DEVICES += oolite-v5.2-dev
+
 
 define Device/omy-g1
   $(Device/tplink-16mlzma)
@@ -883,6 +885,8 @@ define Device/som9331
 endef
 TARGET_DEVICES += som9331
 
+
+
 define Device/t830
   DEVICE_TITLE := YunCore T830
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
@@ -928,6 +932,7 @@ define Device/n5q
 	append-rootfs | pad-rootfs | append-metadata | check-size $$$$(IMAGE_SIZE)
 endef
 TARGET_DEVICES += n5q
+
 
 define Device/c-55
   DEVICE_TITLE := AirTight Networks C-55
@@ -975,6 +980,21 @@ define Device/seama
   SEAMA_SIGNATURE :=
 endef
 
+define Device/dir-869-a1
+  $(Device/seama)
+  DEVICE_TITLE := D-Link DIR-869 rev. A1
+  DEVICE_PACKAGES :=
+  BOARDNAME := DIR-869-A1
+  IMAGE_SIZE := 15872k
+  MTDPARTS := spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,64k(devdata)ro,64k(devconf)ro,15872k(firmware),64k(radiocfg)ro
+  SEAMA_SIGNATURE := wrgac54_dlink.2015_dir869
+  IMAGE/factory.bin := \
+	$$(IMAGE/default) | pad-rootfs -x 64 | \
+	seama | seama-seal -m "signature=$$$$(SEAMA_SIGNATURE)" | \
+	check-size $$$$(IMAGE_SIZE)
+endef
+TARGET_DEVICES += dir-869-a1
+
 define Device/mynet-n600
   $(Device/seama)
   DEVICE_TITLE := Western Digital My Net N600
@@ -997,6 +1017,7 @@ define Device/mynet-n750
 endef
 TARGET_DEVICES += mynet-n750
 
+
 define Device/dap-1330-a1
   DEVICE_TITLE := D-Link DAP-1330 rev. A1
   DEVICE_PACKAGES := rssileds
@@ -1008,6 +1029,7 @@ define Device/dap-1330-a1
   DAP_SIGNATURE := HONEYBEE-FIRMWARE-DAP-1330
 endef
 TARGET_DEVICES += dap-1330-a1
+
 
 define Device/wam250
   DEVICE_TITLE := Samsung WAM250
@@ -1033,6 +1055,7 @@ define Device/wifi-pineapple-nano
   IMAGES := sysupgrade.bin
 endef
 TARGET_DEVICES += wifi-pineapple-nano
+
 
 define Device/wpj-16m
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport

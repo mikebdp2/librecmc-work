@@ -187,7 +187,7 @@ define KernelPackage/fb-tft
   SUBMENU:=$(VIDEO_MENU)
   TITLE:=Support for small TFT LCD display modules
   DEPENDS:= \
-	  @GPIO_SUPPORT @!LINUX_3_18 @!LINUX_4_9 +kmod-backlight \
+	  @GPIO_SUPPORT @!LINUX_4_9 +kmod-backlight \
 	  +kmod-fb +kmod-fb-sys-fops +kmod-fb-sys-ram +kmod-spi-bitbang
   KCONFIG:= \
        CONFIG_FB_BACKLIGHT=y \
@@ -239,11 +239,46 @@ endef
 
 $(eval $(call KernelPackage,drm))
 
+define KernelPackage/drm-ttm
+  SUBMENU:=$(VIDEO_MENU)
+  TITLE:=GPU memory management subsystem
+  DEPENDS:=@DISPLAY_SUPPORT +kmod-drm
+  KCONFIG:=CONFIG_DRM_TTM
+  FILES:=$(LINUX_DIR)/drivers/gpu/drm/ttm/ttm.ko
+  AUTOLOAD:=$(call AutoProbe,ttm)
+endef
+
+define KernelPackage/drm-ttm/description
+  GPU memory management subsystem for devices with multiple GPU memory types.
+  Will be enabled automatically if a device driver uses it.
+endef
+
+$(eval $(call KernelPackage,drm-ttm))
+
+define KernelPackage/drm-kms-helper
+  SUBMENU:=$(VIDEO_MENU)
+  TITLE:=CRTC helpers for KMS drivers
+  DEPENDS:=@DISPLAY_SUPPORT +kmod-drm +kmod-fb +kmod-fb-sys-fops +kmod-fb-cfb-copyarea \
+	+kmod-fb-cfb-fillrect +kmod-fb-cfb-imgblt +kmod-fb-sys-ram
+  KCONFIG:= \
+    CONFIG_DRM_KMS_HELPER \
+    CONFIG_DRM_KMS_FB_HELPER=y
+  FILES:=$(LINUX_DIR)/drivers/gpu/drm/drm_kms_helper.ko
+  AUTOLOAD:=$(call AutoProbe,drm_kms_helper)
+endef
+
+define KernelPackage/drm-kms-helper/description
+  CRTC helpers for KMS drivers.
+endef
+
+$(eval $(call KernelPackage,drm-kms-helper))
+
+
 
 define KernelPackage/drm-imx
   SUBMENU:=$(VIDEO_MENU)
   TITLE:=Freescale i.MX DRM support
-  DEPENDS:=@TARGET_imx6 +kmod-drm +kmod-fb +kmod-fb-cfb-copyarea +kmod-fb-cfb-imgblt +kmod-fb-cfb-fillrect +kmod-fb-sys-fops +kmod-fb-sys-ram
+  DEPENDS:=@TARGET_imx6 +kmod-drm-kms-helper
   KCONFIG:=CONFIG_DRM_IMX \
 	CONFIG_DRM_FBDEV_EMULATION=y \
 	CONFIG_DRM_FBDEV_OVERALLOC=100 \
@@ -251,8 +286,6 @@ define KernelPackage/drm-imx
 	CONFIG_RESET_CONTROLLER=y \
 	CONFIG_DRM_IMX_IPUV3 \
 	CONFIG_IMX_IPUV3 \
-	CONFIG_DRM_KMS_HELPER \
-	CONFIG_DRM_KMS_FB_HELPER=y \
 	CONFIG_DRM_GEM_CMA_HELPER=y \
 	CONFIG_DRM_KMS_CMA_HELPER=y \
 	CONFIG_DRM_IMX_FB_HELPER \
@@ -262,8 +295,7 @@ define KernelPackage/drm-imx
 	CONFIG_DRM_IMX_HDMI=n
   FILES:= \
 	$(LINUX_DIR)/drivers/gpu/drm/imx/imxdrm.ko \
-	$(LINUX_DIR)/drivers/gpu/ipu-v3/imx-ipu-v3.ko \
-	$(LINUX_DIR)/drivers/gpu/drm/drm_kms_helper.ko
+	$(LINUX_DIR)/drivers/gpu/ipu-v3/imx-ipu-v3.ko
   AUTOLOAD:=$(call AutoLoad,08,imxdrm imx-ipu-v3 imx-ipuv3-crtc)
 endef
 
@@ -318,6 +350,7 @@ endef
 
 $(eval $(call KernelPackage,drm-imx-ldb))
 
+
 #
 # Video Capture
 #
@@ -364,7 +397,7 @@ endef
 
 define KernelPackage/video-videobuf2
   TITLE:=videobuf2 lib
-  DEPENDS:=+kmod-dma-buf @!LINUX_3_18
+  DEPENDS:=+kmod-dma-buf
   KCONFIG:= \
 	CONFIG_VIDEOBUF2_CORE \
 	CONFIG_VIDEOBUF2_MEMOPS \

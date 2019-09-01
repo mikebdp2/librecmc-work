@@ -42,6 +42,12 @@ define Build/add-elecom-factory-initramfs
   fi
 endef
 
+define Build/nec-enc
+  $(STAGING_DIR_HOST)/bin/nec-enc \
+    -i $@ -o $@.new -k $(1)
+  mv $@.new $@
+endef
+
 define Build/nec-fw
   ( stat -c%s $@ | tr -d "\n" | dd bs=16 count=1 conv=sync; ) >> $@
   ( \
@@ -68,6 +74,23 @@ define Device/seama
 	$$(IMAGE/default) | pad-rootfs -x 64 | seama | seama-seal | check-size $$$$(IMAGE_SIZE)
   SEAMA_SIGNATURE :=
 endef
+
+define Device/8dev_carambola2
+  ATH_SOC := ar9331
+  DEVICE_TITLE := 8devices Carambola2
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb-chipidea2
+  IMAGE_SIZE := 16000k
+  SUPPORTED_DEVICES += carambola2
+endef
+TARGET_DEVICES += 8dev_carambola2
+
+define Device/aruba_ap-105
+  ATH_SOC := ar7161
+  DEVICE_TITLE := Aruba AP-105
+  IMAGE_SIZE := 16000k
+  DEVICE_PACKAGES := kmod-i2c-core kmod-i2c-gpio kmod-tpm-i2c-atmel
+endef
+TARGET_DEVICES += aruba_ap-105
 
 define Device/avm_fritz300e
   ATH_SOC := ar7242
@@ -171,6 +194,21 @@ define Device/comfast_cf-e120a-v3
 endef
 TARGET_DEVICES += comfast_cf-e120a-v3
 
+define Device/comfast_cf-e5
+  ATH_SOC := qca9531
+  DEVICE_TITLE := COMFAST CF-E5/E7
+  DEVICE_PACKAGES := rssileds kmod-leds-gpio kmod-usb-core kmod-usb2 kmod-usb-net \
+	kmod-usb-net-qmi-wwan -swconfig -uboot-envtools
+  IMAGE_SIZE := 16192k
+endef
+TARGET_DEVICES += comfast_cf-e5
+
+
+
+
+
+
+
 define Device/dlink_dir-825-b1
   ATH_SOC := ar7161
   DEVICE_TITLE := D-LINK DIR-825 B1
@@ -209,6 +247,8 @@ define Device/dlink_dir-835-a1
 endef
 TARGET_DEVICES += dlink_dir-835-a1
 
+
+
 define Device/elecom_wrc-300ghbk2-i
   ATH_SOC := qca9563
   DEVICE_TITLE := ELECOM WRC-300GHBK2-I
@@ -225,6 +265,9 @@ define Device/embeddedwireless_dorin
   IMAGE_SIZE := 16000k
 endef
 TARGET_DEVICES += embeddedwireless_dorin
+
+
+
 
 define Device/etactica_eg200
   ATH_SOC := ar9331
@@ -244,19 +287,29 @@ define Device/glinet_gl-ar150
 endef
 TARGET_DEVICES += glinet_gl-ar150
 
-define Device/glinet_gl-ar300m-nor
+define Device/glinet_gl-ar300m-common-nor
   ATH_SOC := qca9531
-  DEVICE_TITLE := GL.iNet GL-AR300M
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2
   IMAGE_SIZE := 16000k
   SUPPORTED_DEVICES += gl-ar300m
+endef
+
+define Device/glinet_gl-ar300m-lite
+  $(Device/glinet_gl-ar300m-common-nor)
+  DEVICE_TITLE := GL.iNet GL-AR300M-Lite
+endef
+TARGET_DEVICES += glinet_gl-ar300m-lite
+
+define Device/glinet_gl-ar300m-nor
+  $(Device/glinet_gl-ar300m-common-nor)
+  DEVICE_TITLE := GL.iNet GL-AR300M
 endef
 TARGET_DEVICES += glinet_gl-ar300m-nor
 
 define Device/glinet_gl-ar750s
   ATH_SOC := qca9563
   DEVICE_TITLE := GL.iNet GL-AR750S
-  DEVICE_PACKAGES := kmod-usb2
+  DEVICE_PACKAGES := kmod-usb2 block-mount
   IMAGE_SIZE := 16000k
   SUPPORTED_DEVICES += gl-ar750s
 endef
@@ -274,8 +327,12 @@ define Device/iodata_etg3-r
   ATH_SOC := ar9342
   DEVICE_TITLE := I-O DATA ETG3-R
   IMAGE_SIZE := 7680k
+  DEVICE_PACKAGES := -iwinfo -kmod-ath9k -wpad-basic
 endef
 TARGET_DEVICES += iodata_etg3-r
+
+
+
 
 define Device/iodata_wn-ag300dgr
   ATH_SOC := ar1022
@@ -289,6 +346,29 @@ define Device/iodata_wn-ag300dgr
 endef
 TARGET_DEVICES += iodata_wn-ag300dgr
 
+define Device/jjplus_ja76pf2
+  ATH_SOC := ar7161
+  DEVICE_TITLE := jjPlus JA76PF2
+  DEVICE_PACKAGES += -kmod-ath9k -swconfig -wpad-mini -uboot-envtools fconfig
+  IMAGE/sysupgrade.bin := append-rootfs | pad-rootfs | combined-image | check-size $$$$(IMAGE_SIZE)
+#  IMAGE/sysupgrade.bin := append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE) | sysupgrade-tar rootfs=$$$$@ | append-metadata
+  KERNEL := kernel-bin | append-dtb | lzma | pad-to $$(BLOCKSIZE)
+  KERNEL_INITRAMFS := kernel-bin | append-dtb
+  IMAGE_SIZE := 16000k
+endef
+TARGET_DEVICES += jjplus_ja76pf2
+
+define Device/librerouter_librerouter-v1
+  ATH_SOC := qca9558
+  DEVICE_TITLE := LibreRouter v1
+  IMAGE_SIZE := 7936k
+  DEVICE_PACKAGES := kmod-usb-core kmod-usb2
+endef
+TARGET_DEVICES += librerouter_librerouter-v1
+
+
+
+
 define Device/ocedo_raccoon
   ATH_SOC := ar9344
   DEVICE_TITLE := OCEDO Raccoon
@@ -296,6 +376,8 @@ define Device/ocedo_raccoon
   IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | append-metadata | check-size $$$$(IMAGE_SIZE)
 endef
 TARGET_DEVICES += ocedo_raccoon
+
+
 
 define Device/pcs_cap324
   ATH_SOC := ar9344
@@ -324,13 +406,12 @@ TARGET_DEVICES += pcs_cr5000
 
 define Device/netgear_wndr3x00
   ATH_SOC := ar7161
-  KERNEL := kernel-bin | append-dtb | lzma -d20 | netgear-uImage lzma
-  IMAGES += factory.img
   IMAGE/default := append-kernel | pad-to $$$$(BLOCKSIZE) | netgear-squashfs | append-rootfs | pad-rootfs
-  IMAGE/sysupgrade.bin := $$(IMAGE/default) | append-metadata | check-size $$$$(IMAGE_SIZE)
-  IMAGE/factory.img := $$(IMAGE/default) | netgear-dni | check-size $$$$(IMAGE_SIZE)
   DEVICE_PACKAGES := kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-usb-ledtrig-usbport kmod-leds-reset kmod-owl-loader
+  $(Device/netgear_ath79)
 endef
+
+
 
 define Device/netgear_wndr3700
   $(Device/netgear_wndr3x00)
@@ -375,6 +456,7 @@ define Device/netgear_wndr3800
 endef
 TARGET_DEVICES += netgear_wndr3800
 
+
 define Device/rosinson_wr818
   ATH_SOC := qca9563
   DEVICE_TITLE := ROSINSON WR818
@@ -382,6 +464,17 @@ define Device/rosinson_wr818
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
 endef
 TARGET_DEVICES += rosinson_wr818
+
+define Device/wd_mynet-n750
+  $(Device/seama)
+  ATH_SOC := ar9344
+  DEVICE_TITLE := Western Digital My Net N750
+  IMAGE_SIZE := 15872k
+  DEVICE_PACKAGES := kmod-usb-core kmod-usb2
+  SEAMA_SIGNATURE := wrgnd13_wd_av
+  SUPPORTED_DEVICES += mynet-n750
+endef
+TARGET_DEVICES += wd_mynet-n750
 
 define Device/wd_mynet-wifi-rangeextender
   ATH_SOC := ar9344
@@ -410,3 +503,13 @@ define Device/xiaomi_mi-router-4q
   IMAGE_SIZE := 14336k
 endef
 TARGET_DEVICES += xiaomi_mi-router-4q
+
+
+define Device/zbtlink_zbt-wd323
+  ATH_SOC := ar9344
+  DEVICE_TITLE := ZBT WD323
+  IMAGE_SIZE := 16000k
+  DEVICE_PACKAGES := kmod-usb2 kmod-i2c-core kmod-i2c-gpio kmod-rtc-pcf8563 \
+		     kmod-usb-serial kmod-usb-serial-cp210x uqmi
+endef
+TARGET_DEVICES += zbtlink_zbt-wd323

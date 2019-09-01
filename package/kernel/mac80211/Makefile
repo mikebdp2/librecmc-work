@@ -10,10 +10,10 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=mac80211
 
-PKG_VERSION:=4.19.23-1
-PKG_RELEASE:=4
-PKG_SOURCE_URL:=@KERNEL/linux/kernel/projects/backports/stable/v4.19.23/
-PKG_HASH:=703e940b542eb56067fcd847a7c69398dcc9829f34472647eea4211cb2ab3b83
+PKG_VERSION:=4.19.66-1
+PKG_RELEASE:=1
+PKG_SOURCE_URL:=@KERNEL/linux/kernel/projects/backports/stable/v4.19.66/
+PKG_HASH:=1f3c6a58cb45b247f6e473d1b52236bfbb41cb3e11e38a74526727e911b51a02
 
 PKG_SOURCE:=backports-$(PKG_VERSION).tar.xz
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/backports-$(PKG_VERSION)
@@ -22,15 +22,19 @@ PKG_BUILD_PARALLEL:=1
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 
 PKG_DRIVERS = \
+	adm8211 \
 	lib80211 \
 	mac80211-hwsim
-
+	
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_kmod-mac80211 \
 	CONFIG_PACKAGE_MAC80211_DEBUGFS \
 	CONFIG_PACKAGE_MAC80211_MESH \
 	CONFIG_PACKAGE_MAC80211_TRACING \
+	CONFIG_PACKAGE_IWLWIFI_DEBUG \
+	CONFIG_PACKAGE_IWLWIFI_DEBUGFS \
+	CONFIG_PACKAGE_RTLWIFI_DEBUG \
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -55,7 +59,19 @@ config-y:= \
 	MAC80211_RC_DEFAULT_MINSTREL \
 	WLAN_VENDOR_ADMTEK \
 	WLAN_VENDOR_ATH \
-
+	WLAN_VENDOR_ATMEL \
+	WLAN_VENDOR_BROADCOM \
+	WLAN_VENDOR_CISCO \
+	WLAN_VENDOR_INTEL \
+	WLAN_VENDOR_INTERSIL \
+	WLAN_VENDOR_MARVELL \
+	WLAN_VENDOR_MEDIATEK \
+	WLAN_VENDOR_RALINK \
+	WLAN_VENDOR_REALTEK \
+	WLAN_VENDOR_RSI \
+	WLAN_VENDOR_ST \
+	WLAN_VENDOR_TI \
+	WLAN_VENDOR_ZYDAS \
 
 config-$(call config_package,cfg80211) += CFG80211
 
@@ -124,6 +140,25 @@ define KernelPackage/mac80211/description
 Generic IEEE 802.11 Networking Stack (mac80211)
 endef
 
+define KernelPackage/adm8211
+  $(call KernelPackage/mac80211/Default)
+  TITLE:=ADMTek 8211 support
+  DEPENDS+=@PCI_SUPPORT +kmod-mac80211 +kmod-eeprom-93cx6
+  FILES:=$(PKG_BUILD_DIR)/drivers/net/wireless/admtek/adm8211.ko
+  AUTOLOAD:=$(call AutoProbe,adm8211)
+endef
+
+
+
+
+
+
+
+
+
+
+
+
 define KernelPackage/lib80211
   $(call KernelPackage/mac80211/Default)
   TITLE:=802.11 Networking stack
@@ -160,6 +195,25 @@ define KernelPackage/mac80211-hwsim
 endef
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ifdef CONFIG_PACKAGE_MAC80211_DEBUGFS
   config-y += \
 	CFG80211_DEBUGFS \
@@ -173,7 +227,15 @@ endif
 
 config-$(call config_package,lib80211) += LIB80211 LIB80211_CRYPT_WEP LIB80211_CRYPT_CCMP LIB80211_CRYPT_TKIP
 
+
 config-$(call config_package,mac80211-hwsim) += MAC80211_HWSIM
+
+
+
+config-$(call config_package,adm8211) += ADM8211
+config-$(call config_package,rsi91x) += RSI_91X
+config-$(call config_package,rsi91x-usb) += RSI_USB
+config-$(call config_package,rsi91x-sdio) += RSI_SDIO
 
 config-$(CONFIG_LEDS_TRIGGERS) += MAC80211_LEDS
 
@@ -243,6 +305,7 @@ define Build/Patch
 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/ath,ath/)
 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/rt2x00,rt2x00/)
 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/mwl,mwl/)
+	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/brcm,brcm/)
 	$(if $(QUILT),touch $(PKG_BUILD_DIR)/.quilt_used)
 endef
 
@@ -252,6 +315,7 @@ define Quilt/Refresh/Package
 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/ath,ath/)
 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/rt2x00,rt2x00/)
 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/mwl,mwl/)
+	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/brcm,brcm/)
 endef
 
 define Build/Compile
@@ -274,6 +338,7 @@ define Build/InstallDev
 endef
 
 
+
 define KernelPackage/cfg80211/install
 	$(INSTALL_DIR) $(1)/lib/wifi $(1)/lib/netifd/wireless
 	$(INSTALL_DATA) ./files/lib/wifi/mac80211.sh $(1)/lib/wifi
@@ -281,6 +346,7 @@ define KernelPackage/cfg80211/install
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/ieee80211
 	$(INSTALL_DATA) ./files/mac80211.hotplug $(1)/etc/hotplug.d/ieee80211/10-wifi-detect
 endef
+
 
 $(eval $(foreach drv,$(PKG_DRIVERS),$(call KernelPackage,$(drv))))
 $(eval $(call KernelPackage,cfg80211))

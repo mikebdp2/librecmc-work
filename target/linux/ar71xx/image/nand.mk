@@ -29,6 +29,7 @@ define Device/c-60
 endef
 TARGET_DEVICES += c-60
 
+
 define Device/hiveap-121
   DEVICE_TITLE := Aerohive HiveAP-121
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-i2c-gpio-custom kmod-spi-gpio kmod-ath9k kmod-tpm-i2c-atmel
@@ -74,6 +75,7 @@ define Device/rambutan
 endef
 TARGET_DEVICES += rambutan
 
+
 define Device/z1
   DEVICE_TITLE := Meraki Z1
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport kmod-spi-gpio kmod-ath9k kmod-owl-loader
@@ -87,6 +89,7 @@ define Device/z1
 endef
 TARGET_DEVICES += z1
 
+
 define LegacyDevice/WNDR3700V4
   DEVICE_TITLE := NETGEAR WNDR3700v4
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
@@ -98,3 +101,4 @@ define LegacyDevice/WNDR4300V1
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
 endef
 LEGACY_DEVICES += WNDR4300V1
+

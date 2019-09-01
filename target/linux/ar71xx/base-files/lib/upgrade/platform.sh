@@ -218,6 +218,7 @@ platform_check_image() {
 	archer-c7-v4|\
 	archer-c7-v5|\
 	bullet-m|\
+	bullet-m-xw|\
 	c-55|\
 	carambola2|\
 	cf-e316n-v2|\
@@ -557,6 +558,7 @@ platform_check_image() {
 	rb-912uag-2hpnd|\
 	rb-912uag-5hpnd|\
 	rb-921gs-5hpacd-r2|\
+	rb-922uags-5hpacd|\
 	rb-951g-2hnd|\
 	rb-951ui-2hnd|\
 	rb-2011l|\
@@ -566,6 +568,7 @@ platform_check_image() {
 	rb-2011uas-2hnd|\
 	rb-2011uias|\
 	rb-2011uias-2hnd|\
+	rb-2011uias-2hnd-r2|\
 	rb-sxt2n|\
 	rb-sxt5n)
 		nand_do_platform_check routerboard $1
@@ -589,7 +592,8 @@ platform_check_image() {
 		tplink_pharos_check_image "$1" "7f454c46" "$(tplink_pharos_get_model_string)" '' && return 0
 		return 1
 		;;
-	cpe210-v2)
+	cpe210-v2|\
+	cpe210-v3)
 		tplink_pharos_check_image "$1" "01000000" "$(tplink_pharos_v2_get_model_string)" '\0\xff\r' && return 0
 		return 1
 		;;
@@ -730,6 +734,7 @@ platform_check_image() {
 	rb-lhg-5nd|\
 	rb-map-2nd|\
 	rb-mapl-2nd|\
+	rb-sxt-2nd-r3|\
 	rb-wap-2nd|\
 	rb-wapg-5hact2hnd|\
 	rb-wapr-2nd)
@@ -758,6 +763,7 @@ platform_pre_upgrade() {
 	rb-lhg-5nd|\
 	rb-map-2nd|\
 	rb-mapl-2nd|\
+	rb-sxt-2nd-r3|\
 	rb-wap-2nd|\
 	rb-wapg-5hact2hnd|\
 	rb-wapr-2nd)
@@ -876,6 +882,7 @@ platform_do_upgrade() {
 	rb-912uag-2hpnd|\
 	rb-912uag-5hpnd|\
 	rb-921gs-5hpacd-r2|\
+	rb-922uags-5hpacd|\
 	rb-951g-2hnd|\
 	rb-951ui-2hnd|\
 	rb-2011il|\
@@ -885,6 +892,7 @@ platform_do_upgrade() {
 	rb-2011uas-2hnd|\
 	rb-2011uias|\
 	rb-2011uias-2hnd|\
+	rb-2011uias-2hnd-r2|\
 	rb-sxt2n|\
 	rb-sxt5n|\
 	wi2a-ac200i|\

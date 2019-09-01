@@ -1,3 +1,4 @@
+
 define LegacyDevice/DIR600A1
   DEVICE_TITLE := D-Link DIR-600 rev. A1
 endef

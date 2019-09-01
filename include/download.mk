@@ -28,7 +28,7 @@ define dl_method
 $(strip \
   $(if $(filter git,$(2)),$(call dl_method_git,$(1),$(2)),
     $(if $(2),$(2), \
-      $(if $(filter @APACHE/% @GNOME/% @GNU/% @KERNEL_LIBRE/% @KERNEL/% @SF/% @SAVANNAH/% ftp://% http://% https://% file://%,$(1)),default, \
+      $(if $(filter @APACHE/% @GITHUB/% @GNOME/% @GNU/% @KERNEL_LIBRE/% @KERNEL/% @SF/% @SAVANNAH/% ftp://% http://% https://% file://%,$(1)),default, \
         $(if $(filter git://%,$(1)),$(call dl_method_git,$(1),$(2)), \
           $(if $(filter svn://%,$(1)),svn, \
             $(if $(filter cvs://%,$(1)),cvs, \
@@ -55,7 +55,8 @@ define dl_pack
 	$(if $(dl_pack/$(call ext,$(1))),$(dl_pack/$(call ext,$(1))),$(dl_pack/unknown))
 endef
 define dl_tar_pack
-	$(TAR) --numeric-owner --owner=0 --group=0 --sort=name $$$${TAR_TIMESTAMP:+--mtime="$$$$TAR_TIMESTAMP"} -c $(2) | $(call dl_pack,$(1))
+	$(TAR) --numeric-owner --owner=0 --group=0 --mode=a-s --sort=name \
+		$$$${TAR_TIMESTAMP:+--mtime="$$$$TAR_TIMESTAMP"} -c $(2) | $(call dl_pack,$(1))
 endef
 
 ifdef CHECK

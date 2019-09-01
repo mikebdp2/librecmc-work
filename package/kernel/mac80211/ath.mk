@@ -1,5 +1,5 @@
 PKG_DRIVERS += \
-	ath ath5k ath6kl ath9k ath9k-common ath9k-htc \
+	ath ath5k ath9k ath9k-common ath9k-htc \
 	carl9170
 
 PKG_CONFIG_DEPENDS += \
@@ -49,9 +49,6 @@ else
   config-y += ATH5K_PCI
 endif
 
-config-$(call config_package,ath6kl) += ATH6KL
-config-$(call config_package,ath6kl-sdio) += ATH6KL_SDIO
-config-$(call config_package,ath6kl-usb) += ATH6KL_USB
 
 config-$(call config_package,carl9170) += CARL9170
 
@@ -73,7 +70,7 @@ define KernelPackage/ath/config
 		bool "Atheros wireless debugging"
 		help
 		  Say Y, if you want to debug atheros wireless drivers.
-		  Only ath9k makes use of this.
+		  Only ath9k & ath10k make use of this.
 
 	config PACKAGE_ATH_DFS
 		bool "Enable DFS support"
@@ -131,42 +128,10 @@ define KernelPackage/ath5k/description
  Atheros 5xxx chipset.
 endef
 
-define KernelPackage/ath6kl
-  $(call KernelPackage/mac80211/Default)
-  TITLE:=Atheros FullMAC wireless devices (common code for ath6kl_sdio and ath6kl_usb)
-  URL:=https://wireless.wiki.kernel.org/en/users/drivers/ath6kl
-  HIDDEN:=1
-  DEPENDS+= +kmod-ath +@DRIVER_11N_SUPPORT
-  FILES:= $(PKG_BUILD_DIR)/drivers/net/wireless/ath/ath6kl/ath6kl_core.ko
-endef
 
-define KernelPackage/ath6kl-sdio
-  $(call KernelPackage/mac80211/Default)
-  TITLE:=Atheros 802.11n SDIO wireless cards support
-  URL:=https://wireless.wiki.kernel.org/en/users/drivers/ath6kl
-  DEPENDS+= +kmod-mmc +kmod-ath6kl
-  FILES:= $(PKG_BUILD_DIR)/drivers/net/wireless/ath/ath6kl/ath6kl_sdio.ko
-  AUTOLOAD:=$(call AutoProbe,ath6kl_sdio)
-endef
 
-define KernelPackage/ath6kl-sdio/description
-This module adds support for wireless adapters based on
-Atheros IEEE 802.11n AR6003 and AR6004 family of chipsets.
-endef
 
-define KernelPackage/ath6kl-usb
-  $(call KernelPackage/mac80211/Default)
-  TITLE:=Atheros 802.11n USB wireless cards support
-  URL:=https://wireless.wiki.kernel.org/en/users/drivers/ath6kl
-  DEPENDS+= @USB_SUPPORT +kmod-usb-core +kmod-ath6kl
-  FILES:= $(PKG_BUILD_DIR)/drivers/net/wireless/ath/ath6kl/ath6kl_usb.ko
-  AUTOLOAD:=$(call AutoProbe,ath6kl_usb)
-endef
 
-define KernelPackage/ath6kl-usb/description
-This module adds support for wireless adapters based on the
-Atheros IEEE 802.11n AR6004 chipset.
-endef
 
 define KernelPackage/ath9k-common
   $(call KernelPackage/mac80211/Default)
@@ -225,6 +190,9 @@ define KernelPackage/ath9k-htc/description
 This module adds support for wireless adapters based on
 Atheros USB AR9271 and AR7010 family of chipsets.
 endef
+
+
+
 
 define KernelPackage/carl9170
   $(call KernelPackage/mac80211/Default)

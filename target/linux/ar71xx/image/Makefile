@@ -16,6 +16,7 @@ ifeq ($(SUBTARGET),generic)
 include ./generic.mk
 include ./generic-legacy-devices.mk
 include ./generic-tp-link.mk
+include ./generic-ubnt.mk
 endif
 ifeq ($(SUBTARGET),tiny)
 include ./tiny.mk

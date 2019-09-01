@@ -6,6 +6,12 @@ define Device/archer-cxx
   KERNEL := kernel-bin | patch-cmdline | lzma | uImageArcher lzma
 endef
 
+
+
+
+
+
+
 define Device/archer-c5-v1
   $(Device/tplink-16mlzma)
   DEVICE_TITLE := TP-LINK Archer C5 v1
@@ -50,26 +56,8 @@ define Device/archer-c7-v2-il
 endef
 TARGET_DEVICES += archer-c7-v2-il
 
-define Device/tl-wdr7500-v3
-  $(Device/tplink-8mlzma)
-  DEVICE_TITLE := TP-LINK Archer C7 v3
-  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
-  BOARDNAME := ARCHER-C7
-  DEVICE_PROFILE := ARCHERC7
-  TPLINK_HWID := 0x75000003
-endef
-TARGET_DEVICES += tl-wdr7500-v3
 
-define Device/archer-c7-v5
-  $(Device/archer-c7-v4)
-  DEVICE_TITLE := TP-LINK Archer C7 v5
-  BOARDNAME := ARCHER-C7-V5
-  TPLINK_BOARD_ID := ARCHER-C7-V5
-  IMAGE_SIZE := 15360k
-  MTDPARTS := spi0.0:128k(factory-uboot)ro,128k(u-boot)ro,64k@0x50000(art)ro,15360k@0xc0000(firmware)
-  SUPPORTED_DEVICES := archer-c7-v5
-endef
-TARGET_DEVICES += archer-c7-v5
+
 
 define Device/cpe510-520-v1
   DEVICE_TITLE := TP-LINK CPE510/520 v1
@@ -104,11 +92,28 @@ define Device/cpe210-v2
   TPLINK_BOARD_ID := CPE210V2
   TPLINK_HWID := 0x0
   TPLINK_HWREV := 0
-  MTDPARTS := spi0.0:128k(u-boot)ro,64k(partition-table)ro,64k(product-info)ro,1792k(kernel),5888k(rootfs),192k(config)ro,64k(ART)ro,7680k@0x40000(firmware)
+  MTDPARTS := spi0.0:128k(u-boot)ro,64k(partition-table)ro,64k(product-info)ro,7680k(firmware),192k(config)ro,64k(ART)ro
   IMAGE_SIZE := 7680k
+  KERNEL := kernel-bin | patch-cmdline | lzma | tplink-v1-header -O
+  KERNEL_INITRAMFS := kernel-bin | patch-cmdline | lzma | tplink-v1-header
   DEVICE_PACKAGES := rssileds
 endef
 TARGET_DEVICES += cpe210-v2
+
+define Device/cpe210-v3
+  $(Device/tplink-safeloader)
+  DEVICE_TITLE := TP-LINK CPE210 v3
+  BOARDNAME := CPE210V3
+  TPLINK_BOARD_ID := CPE210V3
+  TPLINK_HWID := 0x0
+  TPLINK_HWREV := 0
+  MTDPARTS := spi0.0:128k(u-boot)ro,64k(partition-table)ro,64k(product-info)ro,7680k(firmware),192k(config)ro,64k(ART)ro
+  IMAGE_SIZE := 7680k
+  KERNEL := kernel-bin | patch-cmdline | lzma | tplink-v1-header -O
+  KERNEL_INITRAMFS := kernel-bin | patch-cmdline | lzma | tplink-v1-header
+  DEVICE_PACKAGES := rssileds
+endef
+TARGET_DEVICES += cpe210-v3
 
 define Device/wbs210-v1
   $(Device/cpe510-520-v1)
@@ -140,6 +145,8 @@ define Device/eap120-v1
   IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
 endef
 TARGET_DEVICES += eap120-v1
+
+
 
 define Device/tl-mr6400-v1
   $(Device/tplink-8mlzma)
@@ -202,12 +209,14 @@ define Device/tl-wdr4900-v2
 endef
 TARGET_DEVICES += tl-wdr4900-v2
 
+
 define Device/mw4530r-v1
   $(Device/tl-wdr4300-v1)
   DEVICE_TITLE := Mercury MW4530R v1
   TPLINK_HWID := 0x45300001
 endef
 TARGET_DEVICES += mw4530r-v1
+
 
 define Device/tl-wr1043n-v5
   $(Device/archer-cxx)
@@ -343,6 +352,7 @@ define Device/tl-wr842n-v3
   TPLINK_HWID := 0x08420003
 endef
 TARGET_DEVICES += tl-wr842n-v3
+
 
 define Device/tl-wr942n-v1
   $(Device/archer-cxx)

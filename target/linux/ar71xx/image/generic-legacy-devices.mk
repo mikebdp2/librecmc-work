@@ -1,3 +1,4 @@
+
 define LegacyDevice/ALFANX
   DEVICE_TITLE := ALFA Network N2/N5 board
 endef
@@ -148,6 +149,7 @@ define LegacyDevice/DGL5500A1
 endef
 LEGACY_DEVICES += DGL5500A1
 
+
 define LegacyDevice/DHP1565A1
   DEVICE_TITLE := D-Link DHP-1565 rev. A1
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2
@@ -211,11 +213,14 @@ define LegacyDevice/dLAN_pro_500_wp
 endef
 LEGACY_DEVICES += dLAN_pro_500_wp
 
+
 define LegacyDevice/ESR900
   DEVICE_TITLE := EnGenius ESR900
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
 endef
 LEGACY_DEVICES += ESR900
+
+
 
 define LegacyDevice/WP543_8M
   DEVICE_TITLE := Compex WP543/WPJ543 (8MB flash)
@@ -259,6 +264,7 @@ define LegacyDevice/OM5P
 endef
 LEGACY_DEVICES += OM5P
 
+
 define LegacyDevice/MR600
   DEVICE_TITLE := OpenMesh MR600
   DEVICE_PACKAGES := om-watchdog
@@ -270,6 +276,7 @@ define LegacyDevice/MR900
   DEVICE_PACKAGES := om-watchdog
 endef
 LEGACY_DEVICES += MR900
+
 
 define LegacyDevice/ALL0305
   DEVICE_TITLE := Allnet ALL0305
