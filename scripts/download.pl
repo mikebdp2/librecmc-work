@@ -257,10 +257,7 @@ foreach my $mirror (@ARGV) {
 	}
 }
 
-#push @mirrors, 'https://mirror1.openwrt.org';
-push @mirrors, 'https://sources.lede-project.org';
-push @mirrors, 'https://mirror2.openwrt.org/sources';
-push @mirrors, 'https://downloads.openwrt.org/sources';
+push @mirrors, 'https://librecmc.org/librecmc/downloads/sources/v1.5';
 
 while (!-f "$target/$filename") {
 	my $mirror = shift @mirrors;
