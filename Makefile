@@ -18,6 +18,7 @@ $(if $(findstring $(space),$(TOPDIR)),$(error ERROR: The path to the libreCMC di
 
 world:
 
+DISTRO_PKG_CONFIG:=$(shell which -a pkg-config | grep -E '\/usr' | head -n 1)
 export PATH:=$(TOPDIR)/staging_dir/host/bin:$(PATH)
 
 ifneq ($(LIBRECMC_BUILD),1)
