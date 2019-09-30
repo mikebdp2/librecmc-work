@@ -26,7 +26,7 @@ PKG_CONFIG_DEPENDS += \
 sanitize = $(call tolower,$(subst _,-,$(subst $(space),-,$(1))))
 
 VERSION_NUMBER:=$(call qstrip,$(CONFIG_VERSION_NUMBER))
-VERSION_NUMBER:=$(if $(VERSION_NUMBER),$(VERSION_NUMBER),v1.5.0-rc1)
+VERSION_NUMBER:=$(if $(VERSION_NUMBER),$(VERSION_NUMBER),v1.5.0-rc2)
 
 VERSION_CODE:=$(call qstrip,$(CONFIG_VERSION_CODE))
 VERSION_CODE:=$(if $(VERSION_CODE),$(VERSION_CODE),$(REVISION))
@@ -45,7 +45,7 @@ VERSION_MANUFACTURER_URL:=$(call qstrip,$(CONFIG_VERSION_MANUFACTURER_URL))
 VERSION_MANUFACTURER_URL:=$(if $(VERSION_MANUFACTURER_URL),$(VERSION_MANUFACTURER_URL),https://librecmc.org/)
 
 VERSION_BUG_URL:=$(call qstrip,$(CONFIG_VERSION_BUG_URL))
-VERSION_BUG_URL:=$(if $(VERSION_BUG_URL),$(VERSION_BUG_URL),https://git.gnu.io/librecmc/librecmc/issues/)
+VERSION_BUG_URL:=$(if $(VERSION_BUG_URL),$(VERSION_BUG_URL),https://gogs.librecmc.org/libreCMC/libreCMC/issues)
 
 VERSION_HOME_URL:=$(call qstrip,$(CONFIG_VERSION_HOME_URL))
 VERSION_HOME_URL:=$(if $(VERSION_HOME_URL),$(VERSION_HOME_URL),https://librecmc.org/)
