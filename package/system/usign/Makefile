@@ -30,6 +30,9 @@ define Package/usign
   TITLE:=libreCMC signature verification utility
 endef
 
+TARGET_CFLAGS += -flto
+TARGET_LDFLAGS += -flto=jobserver
+
 CMAKE_OPTIONS += \
 	-DUSE_LIBUBOX=on
 
