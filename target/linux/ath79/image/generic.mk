@@ -291,7 +291,7 @@ define Device/glinet_gl-ar300m-common-nor
   ATH_SOC := qca9531
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2
   IMAGE_SIZE := 16000k
-  SUPPORTED_DEVICES += gl-ar300m
+  SUPPORTED_DEVICES += gl-ar300m tpe-r1200
 endef
 
 define Device/glinet_gl-ar300m-lite
@@ -464,6 +464,21 @@ define Device/rosinson_wr818
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
 endef
 TARGET_DEVICES += rosinson_wr818
+
+define Device/thinkpenguin_tpe-r1100
+  ATH_SOC := ar9330
+  DEVICE_TITLE := ThinkPenguin TPE-R1100
+  DEVICE_PACKAGES := kmod-usb-chipidea2
+  IMAGE_SIZE := 16000k
+  SUPPORTED_DEVICES += tpe-r1100
+endef
+TARGET_DEVICES += thinkpenguin_tpe-r1100
+
+define Device/thinkpenguin_tpe-r1200-nor
+  $(Device/glinet_gl-ar300m-common-nor)
+  DEVICE_TITLE := ThinkPenguin TPE-R1200
+endef
+TARGET_DEVICES += thinkpenguin_tpe-r1200-nor
 
 define Device/wd_mynet-n750
   $(Device/seama)

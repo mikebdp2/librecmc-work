@@ -1,0 +1,11 @@
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+#include "qca9531_glinet_gl-ar300m.dtsi"
+
+/ {
+	compatible = "thinkpenguin,tpe-r1200-nor", "qca,qca9531";
+	model = "ThinkPenguin TPE-R1200 (NOR)";
+};
