@@ -41,7 +41,7 @@
   */
 --- a/include/linux/skbuff.h
 +++ b/include/linux/skbuff.h
-@@ -2213,6 +2213,10 @@ static inline int pskb_trim(struct sk_bu
+@@ -2214,6 +2214,10 @@ static inline int pskb_trim(struct sk_bu
  	return (len < skb->len) ? __pskb_trim(skb, len) : 0;
  }
  
@@ -52,7 +52,7 @@
  /**
   *	pskb_trim_unique - remove end from a paged unique (not cloned) buffer
   *	@skb: buffer to alter
-@@ -2319,16 +2323,6 @@ static inline struct sk_buff *dev_alloc_
+@@ -2320,16 +2324,6 @@ static inline struct sk_buff *dev_alloc_
  }
  
  
