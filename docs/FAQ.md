@@ -22,7 +22,7 @@ make improvements that benefit the community as a whole.
 
 ## What devices does libreCMC work with?
 
-The libreCMC project supports mostly consumer-grade router and a few other
+The libreCMC project supports mostly consumer-grade routers and a few other
 embedded devices.  This list can be found on the Supported Hardware page. While
 this list is not extensive, the libreCMC project has very strict requirements
 for supporting devices. Some examples include:
@@ -33,7 +33,7 @@ software. The project will still consider some level of support if it does not
 meet this requirement and meets all of the other requirements.
 
 * The hardware can't require non-free software or binary blobs to work. Non-free
-Software / Blobs are pieces of software where we (the community) does not have
+Software / Blobs are pieces of software where we (the community) do not have
 the source code under a proper Free Software [1] license. Non-free Software and
 blobs make supporting a device for any length of time a chore and usually
 support evaporates when device vendors stop releasing new blobs / components.
