@@ -174,7 +174,7 @@ function wifi_add()
 	if dev then
 		local net = dev:add_wifinet({
 			mode       = "ap",
-			ssid       = "OpenWrt",
+			ssid       = "libreCMC",
 			encryption = "none",
 			disabled   = 1
 		})
