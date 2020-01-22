@@ -206,10 +206,20 @@ endef
 $(eval $(call KernelPackage,block2mtd))
 
 
+define KernelPackage/dax
+  SUBMENU:=$(BLOCK_MENU)
+  TITLE:=DAX: direct access to differentiated memory
+  KCONFIG:=CONFIG_DAX
+  FILES:=$(LINUX_DIR)/drivers/dax/dax.ko
+endef
+
+$(eval $(call KernelPackage,dax))
+
+
 define KernelPackage/dm
   SUBMENU:=$(BLOCK_MENU)
   TITLE:=Device Mapper
-  DEPENDS:=+kmod-crypto-manager
+  DEPENDS:=+kmod-crypto-manager +kmod-dax
   # All the "=n" are unnecessary, they're only there
   # to stop the config from asking the question.
   # MIRROR is M because I've needed it for pvmove.
@@ -326,7 +336,7 @@ $(eval $(call KernelPackage,md-raid10))
 
 
 define KernelPackage/md-raid456
-$(call KernelPackage/md/Depends,+kmod-lib-raid6 +kmod-lib-xor +LINUX_4_4:kmod-lib-crc32c)
+$(call KernelPackage/md/Depends,+kmod-lib-raid6 +kmod-lib-xor +kmod-lib-crc32c)
   TITLE:=RAID Level 456 Driver
   KCONFIG:= \
        CONFIG_ASYNC_CORE \

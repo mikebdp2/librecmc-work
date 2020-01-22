@@ -6,6 +6,7 @@
 
 config KERNEL_BUILD_USER
 	string "Custom Kernel Build User Name"
+	default "builder" if BUILDBOT
 	default ""
 	help
 	  Sets the Kernel build user string, which for example will be returned
@@ -14,6 +15,7 @@ config KERNEL_BUILD_USER
 
 config KERNEL_BUILD_DOMAIN
 	string "Custom Kernel Build Domain Name"
+	default "buildhost" if BUILDBOT
 	default ""
 	help
 	  Sets the Kernel build domain string, which for example will be
@@ -31,7 +33,7 @@ config KERNEL_CRASHLOG
 
 config KERNEL_SWAP
 	bool "Support for paging of anonymous memory (swap)"
-	default y
+	default y if !SMALL_FLASH
 
 config KERNEL_DEBUG_FS
 	bool "Compile the kernel with debug filesystem enabled"
@@ -42,15 +44,20 @@ config KERNEL_DEBUG_FS
 	  write to these files. Many common debugging facilities, such as
 	  ftrace, require the existence of debugfs.
 
+config KERNEL_MIPS_FPU_EMULATOR
+	bool "Compile the kernel with MIPS FPU Emulator"
+	default y if TARGET_pistachio
+	depends on (mips || mipsel || mips64 || mips64el)
+
 config KERNEL_ARM_PMU
 	bool
 	default n
-	depends on (arm || arm64)
+	depends on (arm || aarch64)
 
 config KERNEL_PERF_EVENTS
-	bool
+	bool "Compile the kernel with performance events and counters"
 	default n
-	select KERNEL_ARM_PMU if (arm || arm64)
+	select KERNEL_ARM_PMU if (arm || aarch64)
 
 config KERNEL_PROFILING
 	bool "Compile the kernel with profiling enabled"
@@ -59,6 +66,27 @@ config KERNEL_PROFILING
 	help
 	  Enable the extended profiling support mechanisms used by profilers such
 	  as OProfile.
+
+config KERNEL_TASKSTATS
+	bool "Compile the kernel with task resource/io statistics and accounting"
+	default n
+	help
+	  Enable the collection and publishing of task/io statistics and
+	  accounting.  Enable this option to enable i/o monitoring in system
+	  monitors.
+
+if KERNEL_TASKSTATS
+
+	config KERNEL_TASK_DELAY_ACCT
+		def_bool y
+
+	config KERNEL_TASK_IO_ACCOUNTING
+		def_bool y
+
+	config KERNEL_TASK_XACCT
+		def_bool y
+
+endif
 
 config KERNEL_KALLSYMS
 	bool "Compile the kernel with symbol table information"
@@ -107,7 +135,7 @@ config KERNEL_DEBUG_KERNEL
 
 config KERNEL_DEBUG_INFO
 	bool "Compile the kernel with debug information"
-	default y
+	default y if !SMALL_FLASH
 	select KERNEL_DEBUG_KERNEL
 	help
 	  This will compile your kernel and modules with debug information.
@@ -166,12 +194,12 @@ config KERNEL_KPROBE_EVENT
 	bool
 	default y if KERNEL_KPROBES
 
+config KERNEL_KPROBE_EVENTS
+	bool
+	default y if KERNEL_KPROBES
+
 config KERNEL_AIO
 	bool "Compile the kernel with asynchronous IO support"
-	default n
-
-config KERNEL_DIRECT_IO
-	bool "Compile the kernel with direct IO support"
 	default n
 
 config KERNEL_FHANDLE
@@ -204,7 +232,7 @@ config KERNEL_COREDUMP
 config KERNEL_ELF_CORE
 	bool "Enable process core dump support"
 	select KERNEL_COREDUMP
-	default y
+	default y if !SMALL_FLASH
 
 config KERNEL_PROVE_LOCKING
 	bool "Enable kernel lock checking"
@@ -235,6 +263,16 @@ config KERNEL_RELAY
 config KERNEL_KEXEC
 	bool "Enable kexec support"
 
+config KERNEL_PROC_VMCORE
+	bool
+
+config KERNEL_CRASH_DUMP
+	depends on i386 || x86_64 || arm || armeb
+	select KERNEL_KEXEC
+	select KERNEL_PROC_VMCORE
+	bool "Enable support for kexec crashdump"
+	default y
+
 config USE_RFKILL
 	bool "Enable rfkill support"
 	default RFKILL_SUPPORT
@@ -248,7 +286,7 @@ config KERNEL_DEVTMPFS
 	default n
 	help
 	  devtmpfs is a simple, kernel-managed /dev filesystem. The kernel creates
-	  devices nodes for all registered devices ti simplify boot, but leaves more
+	  devices nodes for all registered devices to simplify boot, but leaves more
 	  complex tasks to userspace (e.g. udev).
 
 if KERNEL_DEVTMPFS
@@ -487,6 +525,20 @@ if KERNEL_CGROUPS
 		  CONFIG_CFQ_GROUP_IOSCHED=y; for enabling throttling policy, set
 		  CONFIG_BLK_DEV_THROTTLING=y.
 
+	if KERNEL_BLK_CGROUP
+
+		config KERNEL_CFQ_GROUP_IOSCHED
+			bool "Proportional weight of disk bandwidth in CFQ"
+
+		config KERNEL_BLK_DEV_THROTTLING
+			bool "Enable throttling policy"
+			default y if TARGET_brcm2708
+
+		config KERNEL_BLK_DEV_THROTTLING_LOW
+			bool "Block throttling .low limit interface support (EXPERIMENTAL)"
+			depends on KERNEL_BLK_DEV_THROTTLING
+	endif
+
 	config KERNEL_DEBUG_BLK_CGROUP
 		bool "Enable Block IO controller debugging"
 		default n
@@ -602,6 +654,17 @@ config KERNEL_SECCOMP
 		  Build kernel with support for seccomp.
 
 #
+# IPv4 configuration
+#
+
+config KERNEL_IP_MROUTE
+	bool "Enable IPv4 multicast routing"
+	default y
+	help
+	  Multicast routing requires a multicast routing daemon in
+	  addition to kernel support.
+
+#
 # IPv6 configuration
 #
 
@@ -617,7 +680,11 @@ if KERNEL_IPV6
 		def_bool y
 
 	config KERNEL_IPV6_MROUTE
-		def_bool y
+		bool "Enable IPv6 multicast routing"
+		default y
+		help
+		  Multicast routing requires a multicast routing daemon in
+		  addition to kernel support.
 
 	config KERNEL_IPV6_PIMSM_V2
 		def_bool n
@@ -666,7 +733,7 @@ menu "Filesystem ACL and attr support options"
 		  Make using ACLs (e.g. POSIX ACL, NFSv4 ACL) the default
 		  for kernel and packages, except tmpfs, flash filesystems,
 		  and old NFS.  Also enable userspace extended attribute support
-		  by default.  (OpenWrt already has an expection it will be
+		  by default.  (libreCMC already has an expection it will be
 		  present in the kernel).
 
 	config KERNEL_FS_POSIX_ACL
@@ -708,7 +775,7 @@ menu "Filesystem ACL and attr support options"
 		select KERNEL_FS_POSIX_ACL
 		default y if USE_FS_ACL_ATTR
 
-	config KERNEL_HFSPLUG_FS_POSIX_ACL
+	config KERNEL_HFSPLUS_FS_POSIX_ACL
 		bool "Enable POSIX ACL for HFS+ Filesystems"
 		select KERNEL_FS_POSIX_ACL
 		default y if USE_FS_ACL_ATTR
@@ -759,3 +826,30 @@ config KERNEL_DEVKMEM
 	  Say Y here if you want to support the /dev/kmem device. The
 	  /dev/kmem device is rarely used, but can be used for certain
 	  kind of kernel debugging operations.
+
+config KERNEL_SQUASHFS_FRAGMENT_CACHE_SIZE
+	int "Number of squashfs fragments cached"
+	default 2 if (SMALL_FLASH && !LOW_MEMORY_FOOTPRINT)
+	default 3
+
+#
+# compile optimiziation setting
+#
+choice
+	prompt "Compiler optimization level"
+	default KERNEL_CC_OPTIMIZE_FOR_SIZE if SMALL_FLASH
+
+config KERNEL_CC_OPTIMIZE_FOR_PERFORMANCE
+	bool "Optimize for performance"
+	help
+	  This is the default optimization level for the kernel, building
+	  with the "-O2" compiler flag for best performance and most
+	  helpful compile-time warnings.
+
+config KERNEL_CC_OPTIMIZE_FOR_SIZE
+	bool "Optimize for size"
+	help
+	  Enabling this option will pass "-Os" instead of "-O2" to
+	  your compiler resulting in a smaller kernel.
+
+endchoice

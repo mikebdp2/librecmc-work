@@ -8,7 +8,6 @@
 override TARGET_BUILD=
 include $(INCLUDE_DIR)/prereq.mk
 include $(INCLUDE_DIR)/kernel.mk
-include $(INCLUDE_DIR)/host.mk
 include $(INCLUDE_DIR)/version.mk
 include $(INCLUDE_DIR)/image-commands.mk
 
@@ -19,10 +18,8 @@ ifndef IB
 endif
 
 include $(INCLUDE_DIR)/image-legacy.mk
-
-ifdef TARGET_PER_DEVICE_ROOTFS
-  include $(INCLUDE_DIR)/rootfs.mk
-endif
+include $(INCLUDE_DIR)/feeds.mk
+include $(INCLUDE_DIR)/rootfs.mk
 
 override MAKE:=$(_SINGLE)$(SUBMAKE)
 override NO_TRACE_MAKE:=$(_SINGLE)$(NO_TRACE_MAKE)
@@ -137,12 +134,13 @@ endef
 
 define Image/BuildKernel/MkuImage
 	mkimage -A $(ARCH) -O linux -T kernel -C $(1) -a $(2) -e $(3) \
-		-n '$(call toupper,$(ARCH)) libreCMC Linux-$(LINUX_VERSION)' -d $(4) $(5)
+		-n '$(call toupper,$(ARCH)) $(VERSION_DIST) Linux-$(LINUX_VERSION)' -d $(4) $(5)
 endef
 
 define Image/BuildKernel/MkFIT
 	$(TOPDIR)/scripts/mkits.sh \
 		-D $(1) -o $(KDIR)/fit-$(1).its -k $(2) $(if $(3),-d $(3)) -C $(4) -a $(5) -e $(6) \
+		-c $(if $(DEVICE_DTS_CONFIG),$(DEVICE_DTS_CONFIG),"config@1") \
 		-A $(LINUX_KARCH) -v $(LINUX_VERSION)
 	PATH=$(LINUX_DIR)/scripts/dtc:$(PATH) mkimage -f $(KDIR)/fit-$(1).its $(KDIR)/fit-$(1)$(7).itb
 endef
@@ -154,6 +152,32 @@ ifdef CONFIG_TARGET_IMAGES_GZIP
   endef
 endif
 
+
+# Disable noisy checks by default as in upstream
+ifeq ($(strip $(call kernel_patchver_ge,4.7.0)),1)
+  DTC_FLAGS += -Wno-unit_address_vs_reg
+endif
+ifeq ($(strip $(call kernel_patchver_ge,4.12.0)),1)
+  DTC_FLAGS += \
+	-Wno-unit_address_vs_reg \
+	-Wno-simple_bus_reg \
+	-Wno-unit_address_format \
+	-Wno-pci_bridge \
+	-Wno-pci_device_bus_num \
+	-Wno-pci_device_reg
+endif
+ifeq ($(strip $(call kernel_patchver_ge,4.17.0)),1)
+  DTC_FLAGS += \
+	-Wno-avoid_unnecessary_addr_size \
+	-Wno-alias_paths
+endif
+ifeq ($(strip $(call kernel_patchver_ge,4.18.0)),1)
+  DTC_FLAGS += \
+	-Wno-graph_child_address \
+	-Wno-graph_port \
+	-Wno-unique_unit_address
+endif
+
 # $(1) source dts file
 # $(2) target dtb file
 # $(3) extra CPP flags
@@ -162,10 +186,11 @@ define Image/BuildDTB
 	$(TARGET_CROSS)cpp -nostdinc -x assembler-with-cpp \
 		-I$(DTS_DIR) \
 		-I$(DTS_DIR)/include \
+		-I$(LINUX_DIR)/include/ \
 		-undef -D__DTS__ $(3) \
 		-o $(2).tmp $(1)
 	$(LINUX_DIR)/scripts/dtc/dtc -O dtb \
-		-i$(dir $(1)) $(4) \
+		-i$(dir $(1)) $(DTC_FLAGS) $(4) \
 		-o $(2) $(2).tmp
 	$(RM) $(2).tmp
 endef
@@ -204,21 +229,21 @@ define Image/mkfs/squashfs
 	$(STAGING_DIR_HOST)/bin/mksquashfs4 $(call mkfs_target_dir,$(1)) $@ \
 		-nopad -noappend -root-owned \
 		-comp $(SQUASHFSCOMP) $(SQUASHFSOPT) \
-		-processors 1 \
-		$(if $(SOURCE_DATE_EPOCH),-fixed-time $(SOURCE_DATE_EPOCH))
+		-processors 1
 endef
 
 # $(1): board name
 # $(2): rootfs type
 # $(3): kernel image
+# $(4): compat string
 ifneq ($(CONFIG_NAND_SUPPORT),)
    define Image/Build/SysupgradeNAND
-	mkdir -p "$(KDIR_TMP)/sysupgrade-$(1)/"
-	echo "BOARD=$(1)" > "$(KDIR_TMP)/sysupgrade-$(1)/CONTROL"
-	[ -z "$(2)" ] || $(CP) "$(KDIR)/root.$(2)" "$(KDIR_TMP)/sysupgrade-$(1)/root"
-	[ -z "$(3)" ] || $(CP) "$(3)" "$(KDIR_TMP)/sysupgrade-$(1)/kernel"
+	mkdir -p "$(KDIR_TMP)/sysupgrade-$(if $(4),$(4),$(1))/"
+	echo "BOARD=$(if $(4),$(4),$(1))" > "$(KDIR_TMP)/sysupgrade-$(if $(4),$(4),$(1))/CONTROL"
+	[ -z "$(2)" ] || $(CP) "$(KDIR)/root.$(2)" "$(KDIR_TMP)/sysupgrade-$(if $(4),$(4),$(1))/root"
+	[ -z "$(3)" ] || $(CP) "$(3)" "$(KDIR_TMP)/sysupgrade-$(if $(4),$(4),$(1))/kernel"
 	(cd "$(KDIR_TMP)"; $(TAR) cvf \
-		"$(BIN_DIR)/$(IMG_PREFIX)-$(1)-$(2)-sysupgrade.tar" sysupgrade-$(1) \
+		"$(BIN_DIR)/$(IMG_PREFIX)-$(1)-$(2)-sysupgrade.tar" sysupgrade-$(if $(4),$(4),$(1)) \
 			$(if $(SOURCE_DATE_EPOCH),--mtime="@$(SOURCE_DATE_EPOCH)") \
 	)
    endef
@@ -260,16 +285,13 @@ define Image/mkfs/ext4
 endef
 
 define Image/Manifest
-	$(STAGING_DIR_HOST)/bin/opkg \
-		--offline-root $(TARGET_DIR) \
-		--add-arch all:100 \
-		--add-arch $(if $(ARCH_PACKAGES),$(ARCH_PACKAGES),$(BOARD)):200 list-installed > \
+	$(call opkg,$(TARGET_DIR_ORIG)) list-installed > \
 		$(BIN_DIR)/$(IMG_PREFIX)$(if $(PROFILE_SANITIZED),-$(PROFILE_SANITIZED)).manifest
 endef
 
 ifdef CONFIG_TARGET_ROOTFS_TARGZ
   define Image/Build/targz
-	$(TAR) -cp --numeric-owner --owner=0 --group=0 --sort=name \
+	$(TAR) -cp --numeric-owner --owner=0 --group=0 --mode=a-s --sort=name \
 		$(if $(SOURCE_DATE_EPOCH),--mtime="@$(SOURCE_DATE_EPOCH)") \
 		-C $(TARGET_DIR)/ . | gzip -9n > $(BIN_DIR)/$(IMG_PREFIX)$(if $(PROFILE_SANITIZED),-$(PROFILE_SANITIZED))-rootfs.tar.gz
   endef
@@ -282,8 +304,8 @@ ifdef CONFIG_TARGET_ROOTFS_CPIOGZ
 endif
 
 mkfs_packages = $(filter-out @%,$(PACKAGES_$(call param_get,pkg,pkg=$(target_params))))
-mkfs_packages_add = $(filter-out -%,$(mkfs_packages))
-mkfs_packages_remove = $(patsubst -%,%,$(filter -%,$(mkfs_packages)))
+mkfs_packages_add = $(foreach pkg,$(filter-out -%,$(mkfs_packages)),$(pkg)$(call GetABISuffix,$(pkg)))
+mkfs_packages_remove = $(foreach pkg,$(patsubst -%,%,$(filter -%,$(mkfs_packages))),$(pkg)$(call GetABISuffix,$(pkg)))
 mkfs_cur_target_dir = $(call mkfs_target_dir,pkg=$(target_params))
 
 opkg_target = \
@@ -302,9 +324,9 @@ target-dir-%: FORCE
 		$(opkg_target) update && \
 		$(opkg_target) install \
 			$(call opkg_package_files,$(mkfs_packages_add)))
-	$(call prepare_rootfs,$(mkfs_cur_target_dir))
-	-mv $(mkfs_cur_target_dir).opkg $(mkfs_cur_target_dir)/etc/opkg
-	rm -f $(mkfs_cur_target_dir).conf
+	-$(CP) -T $(mkfs_cur_target_dir).opkg/ $(mkfs_cur_target_dir)/etc/opkg/
+	rm -rf $(mkfs_cur_target_dir).opkg $(mkfs_cur_target_dir).conf
+	$(call prepare_rootfs,$(mkfs_cur_target_dir),$(TOPDIR)/files)
 
 $(KDIR)/root.%: kernel_prepare
 	$(call Image/mkfs/$(word 1,$(target_params)),$(target_params))
@@ -324,6 +346,7 @@ define Device/Init
   CMDLINE:=
 
   IMAGES :=
+  ARTIFACTS :=
   IMAGE_PREFIX := $(IMG_PREFIX)-$(1)
   IMAGE_NAME = $$(IMAGE_PREFIX)-$$(1)-$$(2)
   KERNEL_PREFIX = $$(IMAGE_PREFIX)
@@ -351,6 +374,7 @@ define Device/Init
   FS_OPTIONS/ubifs = $$(MKUBIFS_OPTS)
 
   DEVICE_DTS :=
+  DEVICE_DTS_CONFIG :=
   DEVICE_DTS_DIR :=
 
   BOARD_NAME :=
@@ -359,15 +383,18 @@ define Device/Init
   IMAGE_METADATA :=
 
   FILESYSTEMS := $(TARGET_FILESYSTEMS)
+
+  UBOOT_PATH :=  $(STAGING_DIR_IMAGE)/uboot-$(1)
+
+  DEFAULT :=
 endef
 
 DEFAULT_DEVICE_VARS := \
-  DEVICE_NAME KERNEL KERNEL_INITRAMFS KERNEL_SIZE KERNEL_INITRAMFS_IMAGE \
-  DEVICE_DTS DEVICE_DTS_DIR BOARD_NAME CMDLINE \
-  UBOOTENV_IN_UBI KERNEL_IN_UBI \
-  BLOCKSIZE PAGESIZE SUBPAGESIZE VID_HDR_OFFSET \
-  UBINIZE_OPTS UIMAGE_NAME UBINIZE_PARTS \
-  SUPPORTED_DEVICES IMAGE_METADATA
+  DEVICE_NAME KERNEL KERNEL_INITRAMFS KERNEL_INITRAMFS_IMAGE KERNEL_SIZE \
+  CMDLINE UBOOTENV_IN_UBI KERNEL_IN_UBI BLOCKSIZE PAGESIZE SUBPAGESIZE \
+  VID_HDR_OFFSET UBINIZE_OPTS UBINIZE_PARTS MKUBIFS_OPTS DEVICE_DTS \
+  DEVICE_DTS_CONFIG DEVICE_DTS_DIR BOARD_NAME UIMAGE_NAME SUPPORTED_DEVICES \
+  IMAGE_METADATA KERNEL_ENTRY KERNEL_LOADADDR UBOOT_PATH
 
 define Device/ExportVar
   $(1) : $(2):=$$($(2))
@@ -395,6 +422,7 @@ endef
 
 define Device/Check/Common
   _PROFILE_SET = $$(strip $$(foreach profile,$$(PROFILES) DEVICE_$(1),$$(call DEVICE_CHECK_PROFILE,$$(profile))))
+  DEVICE_PACKAGES += $$(call extra_packages,$$(DEVICE_PACKAGES))
   ifdef TARGET_PER_DEVICE_ROOTFS
     $$(eval $$(call merge_packages,_PACKAGES,$$(DEVICE_PACKAGES) $$(call DEVICE_EXTRA_PACKAGES,$(1))))
     ROOTFS_ID/$(1) := $$(if $$(_PROFILE_SET),$$(call mkfs_packages_id,$$(_PACKAGES)))
@@ -434,7 +462,27 @@ define Device/Build/compile
 
 endef
 
+ifndef IB
+define Device/Build/dtb
+  ifndef BUILD_DTS_$(1)
+  BUILD_DTS_$(1) := 1
+  $(KDIR)/image-$(1).dtb: FORCE
+	$(call Image/BuildDTB,$(strip $(2))/$(strip $(3)).dts,$$@)
+
+  image_prepare: $(KDIR)/image-$(1).dtb
+  endif
+
+endef
+endif
+
 define Device/Build/kernel
+  $$(eval $$(foreach dts,$$(DEVICE_DTS), \
+	$$(call Device/Build/dtb,$$(notdir $$(dts)), \
+		$$(if $$(DEVICE_DTS_DIR),$$(DEVICE_DTS_DIR),$$(DTS_DIR)), \
+		$$(dts) \
+	) \
+  ))
+
   $(KDIR)/$$(KERNEL_NAME):: image_prepare
   $$(_TARGET): $$(if $$(KERNEL_INSTALL),$(BIN_DIR)/$$(KERNEL_IMAGE))
   $(call Device/Export,$$(KDIR_KERNEL_IMAGE),$(1))
@@ -479,6 +527,20 @@ define Device/Build/image
 
 endef
 
+define Device/Build/artifact
+  $$(_TARGET): $(BIN_DIR)/$(IMAGE_PREFIX)-$(1)
+  $(eval $(call Device/Export,$(KDIR)/tmp/$(IMAGE_PREFIX)-$(1)))
+  $(KDIR)/tmp/$(IMAGE_PREFIX)-$(1): $$(KDIR_KERNEL_IMAGE)
+	@rm -f $$@
+	$$(call concat_cmd,$(ARTIFACT/$(1)))
+
+  .IGNORE: $(BIN_DIR)/$(IMAGE_PREFIX)-$(1)
+
+  $(BIN_DIR)/$(IMAGE_PREFIX)-$(1): $(KDIR)/tmp/$(IMAGE_PREFIX)-$(1)
+	cp $$^ $$@
+
+endef
+
 define Device/Build
   $(if $(CONFIG_TARGET_ROOTFS_INITRAMFS),$(call Device/Build/initramfs,$(1)))
   $(call Device/Build/kernel,$(1))
@@ -489,12 +551,19 @@ define Device/Build
   $$(eval $$(foreach image,$$(IMAGES), \
     $$(foreach fs,$$(filter $(TARGET_FILESYSTEMS),$$(FILESYSTEMS)), \
       $$(call Device/Build/image,$$(fs),$$(image),$(1)))))
+
+  $$(eval $$(foreach artifact,$$(ARTIFACTS), \
+    $$(call Device/Build/artifact,$$(artifact))))
+
 endef
 
 define Device/DumpInfo
 Target-Profile: DEVICE_$(1)
 Target-Profile-Name: $(DEVICE_TITLE)
 Target-Profile-Packages: $(DEVICE_PACKAGES)
+Target-Profile-hasImageMetadata: $(if $(foreach image,$(IMAGES),$(findstring append-metadata,$(IMAGE/$(image)))),1,0)
+Target-Profile-SupportedDevices: $(SUPPORTED_DEVICES)
+$(if $(DEFAULT),Target-Profile-Default: $(DEFAULT))
 Target-Profile-Description:
 $(DEVICE_DESCRIPTION)
 @@
@@ -544,7 +613,7 @@ define BuildImage
 		$(call Image/Prepare)
 
     legacy-images-prepare-make: image_prepare
-		$(MAKE) legacy-images-prepare
+		$(MAKE) legacy-images-prepare BIN_DIR="$(BIN_DIR)"
 
   else
     image_prepare:
@@ -568,7 +637,7 @@ define BuildImage
 
   legacy-images-make: install-images
 	$(call Image/mkfs/ubifs/legacy)
-	$(MAKE) legacy-images
+	$(MAKE) legacy-images BIN_DIR="$(BIN_DIR)"
 
   install: install-images
 	$(call Image/Manifest)

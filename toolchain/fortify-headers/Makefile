@@ -8,12 +8,12 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/target.mk
 
 PKG_NAME:=fortify-headers
-PKG_VERSION:=0.8
+PKG_VERSION:=1.1
 PKG_RELEASE=1
 
 PKG_SOURCE_URL:=http://dl.2f30.org/releases
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_HASH:=afcd073d6d8d175eede2a28a7dd71b7150cb03290f99102261892c793f6b4cb1
+PKG_HASH:=6ba5d860a2d2ba4c3346924b93930c34856eafe148bdbdf271ecab8065201fb6
 
 include $(INCLUDE_DIR)/toolchain-build.mk
 

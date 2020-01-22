@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gettext-full
 PKG_VERSION:=0.19.8.1
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=gettext-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@GNU/gettext
@@ -19,6 +19,7 @@ HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/gettext-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
 PKG_LICENSE:=GPL-3.0+
+PKG_CPE_ID:=cpe:/a:gnu:gettext
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
@@ -33,6 +34,7 @@ define Package/libintl-full
   CATEGORY:=Libraries
   TITLE:=GNU Internationalization library
   URL:=http://www.gnu.org/software/gettext/
+  ABI_VERSION:=8
 endef
 
 TARGET_CFLAGS += $(FPIC)
@@ -76,6 +78,8 @@ HOST_CONFIGURE_VARS += \
 	am_cv_func_iconv=no \
 	ac_cv_header_iconv_h=no \
 
+HOST_CFLAGS += $(HOST_FPIC)
+
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/lib/libintl-full/include
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/libintl.h $(1)/usr/lib/libintl-full/include/
@@ -91,7 +95,7 @@ endef
 
 define Package/libintl-full/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libintl.so* $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libintl.so.* $(1)/usr/lib/
 endef
 
 $(eval $(call HostBuild))

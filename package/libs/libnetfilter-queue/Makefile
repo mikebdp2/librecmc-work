@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libnetfilter_queue
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL=http://git.netfilter.org/libnetfilter_queue
-PKG_SOURCE_DATE:=2016-07-03
-PKG_SOURCE_VERSION:=981025e103d887fb6a9c9bb49c74ec323108d098
-PKG_MIRROR_HASH:=85c124be0e19162e1ebd1aba6e7e86bb4106e9dab4267baaf66d3ccb48d56e3f
+PKG_SOURCE_URL=https://git.netfilter.org/libnetfilter_queue
+PKG_SOURCE_DATE:=2017-06-27
+PKG_SOURCE_VERSION:=601abd1c71ccdf90753cf294c120ad43fb25dc54
+PKG_MIRROR_HASH:=283b99cfe5856dc87fd6bab8f78c0c59b72462d6b4f2b13111f928cf33020eb3
 
 PKG_FIXUP:=autoreconf
 PKG_LICENSE:=GPL-2.0+
@@ -29,6 +29,7 @@ define Package/libnetfilter-queue
   DEPENDS:=+libmnl +libnfnetlink
   TITLE:=API to the in-kernel connection tracking queue infrastructure
   URL:=http://www.netfilter.org/projects/libnetfilter_queue/
+  ABI_VERSION:=1
 endef
 
 define Package/libnetfilter-queue/description

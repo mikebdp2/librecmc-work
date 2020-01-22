@@ -1,17 +1,13 @@
 # libreCMC supported Hardware
 
-Officially supported devices generally fall into one of three categories : can
-easily be flashed from the stock firmware's web-ui, requires the usage of a tFTP
-server or the device must be opened. When choosing a router to use with libreCMC,
-please keep in mind the method which is required for the initial install of
-libreCMC. Unless otherwise noted, the listed devices fall into the first
-category [1].
+Officially supported devices generally fall into three categories : can easily
+be flashed from the stock firmware's web-ui, requires a tFTP flash or opening up
+the router. When choosing a router to use with libreCMC, please keep in mind the
+method which is required for the initial install of libreCMC.
 
 ### Buffalo
-
 * [WZR-HP-G300NH](/WZR_HP_G300NH.md)
 * WHR-HP-G300NH
-* WZR-600DHP [2]
 
 ### Netgear 
 
@@ -47,8 +43,6 @@ category [1].
 
 ## Notes:
 
-[1] Firmware can be flashed from the stock firmware's web-ui.
+[2] requires a tFTP server for flashing.
 
-[2] Requires a tFTP server for initial flashing.
-
-[3] Requires opening up the hardware and the usage of a few tools (SPI Flasher, serial cable or both).
+[3] requires opening up the router / external hardware for initial install (serial cable, SPI flasher or both).

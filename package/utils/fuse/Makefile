@@ -10,7 +10,7 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=fuse
 PKG_VERSION:=2.9.7
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/libfuse/libfuse/releases/download/$(PKG_NAME)-$(PKG_VERSION)
@@ -18,6 +18,7 @@ PKG_HASH:=832432d1ad4f833c20e13b57cf40ce5277a9d33e483205fc63c78111b3358874
 
 PKG_LICENSE:=LGPLv2.1 GPLv2
 PKG_LICENSE_FILES:=COPYING.LIB COPYING
+PKG_CPE_ID:=cpe:/a:fuse_project:fuse
 
 PKG_INSTALL:=1
 
@@ -55,6 +56,7 @@ $(call Package/fuse/Default)
   TITLE+= (library)
   DEPENDS:=+kmod-fuse +libpthread
   SUBMENU:=Filesystem
+  ABI_VERSION:=1
 endef
 
 define Package/libfuse/description

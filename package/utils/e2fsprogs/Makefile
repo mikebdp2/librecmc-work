@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=e2fsprogs
 PKG_VERSION:=1.44.5
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@KERNEL/linux/kernel/people/tytso/e2fsprogs/v$(PKG_VERSION)/
@@ -169,7 +169,7 @@ define Build/Compile
 		CFLAGS="" \
 		CPPFLAGS="" \
 		LDFLAGS="" \
-		V=$(if $(findstring c,$(OPENWRT_VERBOSE)),1,) \
+		V=$(if $(findstring c,$(LIBRECMC_VERBOSE)),1,) \
 		subst
 	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) \
 		LDFLAGS=-Wl,--gc-sections \
@@ -177,7 +177,7 @@ define Build/Compile
 		DESTDIR="$(PKG_INSTALL_DIR)" \
 		ELF_OTHER_LIBS="$(TARGET_LDFLAGS) -luuid" \
 		SYSLIBS="$(TARGET_LDFLAGS) -ldl -L$(PKG_BUILD_DIR)/lib/ -l:libcom_err.so.0.0" \
-		V=$(if $(findstring c,$(OPENWRT_VERBOSE)),1,) \
+		V=$(if $(findstring c,$(LIBRECMC_VERBOSE)),1,) \
 		all
 endef
 

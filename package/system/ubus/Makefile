@@ -4,10 +4,10 @@ PKG_NAME:=ubus
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL=$(PROJECT_GIT)/project/ubus.git
-PKG_SOURCE_DATE:=2018-01-16
-PKG_SOURCE_VERSION:=5bae22eb5472c9c7cc30caa9a84004bba19940d3
-PKG_MIRROR_HASH:=6f46398279339dcc597965306275fe1272af384f8cb253ee8de2c68e366eed55
+PKG_SOURCE_URL=$(PROJECT_GIT)/ubus.git
+PKG_SOURCE_DATE:=2019-12-27
+PKG_SOURCE_VERSION:=041c9d1c052bb4936fd03240f7d0dd64aedda972
+PKG_MIRROR_HASH:=7febbe78dd178d8d7ccacff54c00fb2d19a53624005920db8cd85236f54f8324
 CMAKE_INSTALL:=1
 
 PKG_LICENSE:=LGPL-2.1
@@ -22,13 +22,13 @@ define Package/ubus
   SECTION:=base
   CATEGORY:=Base system
   DEPENDS:=+libubus +libblobmsg-json +ubusd
-  TITLE:=OpenWrt RPC client utility
+  TITLE:=libreCMC RPC client utility
 endef
 
 define Package/ubusd
   SECTION:=base
   CATEGORY:=Base system
-  TITLE:=OpenWrt RPC daemon
+  TITLE:=libreCMC RPC daemon
   DEPENDS:=+libubox +libblobmsg-json
 endef
 
@@ -36,18 +36,19 @@ define Package/libubus
   SECTION:=libs
   CATEGORY:=Libraries
   DEPENDS:=+libubox
-  ABI_VERSION:=$(PKG_VERSION)
-  TITLE:=OpenWrt RPC client library
+  ABI_VERSION:=20191227
+  TITLE:=libreCMC RPC client library
 endef
 
 define Package/libubus-lua
   SECTION:=libs
   CATEGORY:=Libraries
   DEPENDS:=+libubus +liblua
-  TITLE:=Lua binding for the OpenWrt RPC client
+  TITLE:=Lua binding for the libreCMC RPC client
 endef
 
-TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include
+TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include -flto
+TARGET_LDFLAGS += -flto
 
 CMAKE_OPTIONS = \
 	-DLUAPATH=/usr/lib/lua

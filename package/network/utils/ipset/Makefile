@@ -9,12 +9,12 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=ipset
-PKG_VERSION:=6.30
+PKG_VERSION:=7.3
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=http://ipset.netfilter.org
-PKG_HASH:=65bfa43fec3d51a6b4012f3d7e4b93a748df9b71b6cd6c53adbec8083e804a31
+PKG_HASH:=4644c7c5005e90a9b6385d625283eb0b69b34de7192301428665dd909fdaa35a
 
 PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
 PKG_LICENSE:=GPL-2.0
@@ -24,7 +24,7 @@ PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/ipset
+define Package/ipset/Default
   SECTION:=net
   CATEGORY:=Network
   DEPENDS+= +kmod-ipt-ipset +libmnl
@@ -32,29 +32,42 @@ define Package/ipset
   URL:=http://ipset.netfilter.org/
 endef
 
+define Package/ipset
+$(call Package/ipset/Default)
+  DEPENDS+= +libipset
+endef
+
+define Package/libipset
+$(call Package/ipset/Default)
+  ABI_VERSION:=13
+endef
+
 CONFIGURE_ARGS += \
+	--disable-static \
 	--with-kbuild="$(LINUX_DIR)"
+
+TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
 
 MAKE_FLAGS += \
 	ARCH="$(LINUX_KARCH)" \
 	SHELL="$(BASH)"
 
-define Build/Compile
-	$(call Build/Compile/Default)
-endef
-
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include $(1)/usr/lib $(1)/usr/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/libipset $(1)/usr/include/
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libipset.{a,so*} $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libipset.so* $(1)/usr/lib/
 	$(CP) $(PKG_BUILD_DIR)/lib/libipset.pc $(1)/usr/lib/pkgconfig/
 endef
 
 define Package/ipset/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(CP) $(PKG_INSTALL_DIR)/usr/sbin/ipset $(1)/usr/sbin/
+endef
+
+define Package/libipset/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libipset*.so* $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libipset*.so.* $(1)/usr/lib/
 endef
 
 $(eval $(call BuildPackage,ipset))
+$(eval $(call BuildPackage,libipset))

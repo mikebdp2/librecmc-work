@@ -7,7 +7,7 @@
 
 include $(TOPDIR)/rules.mk
 PKG_NAME:=toolchain
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 PKG_LICENSE:=GPL-3.0-with-GCC-exception
@@ -33,6 +33,7 @@ endef
 define Package/libgcc
 $(call Package/gcc/Default)
   TITLE:=GCC support library
+  ABI_VERSION:=1
 endef
 
 define Package/libgcc/config
@@ -59,6 +60,7 @@ define Package/libatomic
 $(call Package/gcc/Default)
   DEPENDS:=+libgcc
   TITLE:=Atomic support library
+  ABI_VERSION:=1
 endef
 
 define Package/libatomic/config
@@ -83,7 +85,7 @@ endef
 
 define Package/libssp
 $(call Package/gcc/Default)
-  DEPENDS+=@SSP_SUPPORT
+  DEPENDS+=@GCC_LIBSSP
   TITLE:=GCC support library
 endef
 
@@ -112,6 +114,7 @@ define Package/libstdcpp
 $(call Package/gcc/Default)
   NAME:=libstdc++
   TITLE:=GNU Standard C++ Library v3
+  ABI_VERSION:=6
 endef
 
 define Package/libstdcpp/config
@@ -164,7 +167,7 @@ define Package/libc/config
 		string
 		prompt "libc shared library files (use wildcards)"
 		depends on EXTERNAL_TOOLCHAIN && PACKAGE_libc
-		default "./lib/ld{-*.so,-linux*.so.*} ./lib/lib{anl,c,cidn,crypt,dl,m,nsl,nss_dns,nss_files,resolv,util}{-*.so,.so.*}"
+		default "./lib/ld{*.so*,-linux*.so.*} ./lib/lib{anl,c,cidn,crypt,dl,m,nsl,nss_dns,nss_files,resolv,util}{-*.so,.so.*,.so}"
 
 	endmenu
 endef
@@ -200,6 +203,26 @@ define Package/libthread-db
 $(call Package/libc/Default)
   DEPENDS:=@!USE_MUSL
   TITLE:=POSIX thread library debugging support
+endef
+
+define Package/libthread-db/config
+	menu "Configuration"
+	depends on EXTERNAL_TOOLCHAIN && PACKAGE_libthread-db
+
+	config LIBTHREAD_DB_ROOT_DIR
+		string
+		prompt "POSIX thread debugging shared library base directory"
+		depends on EXTERNAL_TOOLCHAIN && PACKAGE_libthread-db
+		default TOOLCHAIN_ROOT  if !NATIVE_TOOLCHAIN
+		default "/"  if NATIVE_TOOLCHAIN
+
+	config LIBTHREAD_DB_FILE_SPEC
+		string
+		prompt "POSIX thread debugging shared library files (use wildcards)"
+		depends on EXTERNAL_TOOLCHAIN && PACKAGE_libthread-db
+		default "./lib/libthread_db{-*.so,.so.*}"
+
+	endmenu
 endef
 
 define Package/librt
@@ -254,6 +277,32 @@ define Package/libgfortran/config
 
 	endmenu
 endef
+
+define Package/libgomp
+$(call Package/gcc/Default)
+  TITLE:=OpenMP support library
+endef
+
+define Package/libgomp/config
+	menu "Configuration"
+		depends on EXTERNAL_TOOLCHAIN && PACKAGE_libgomp
+
+	config LIBGOMP_ROOT_DIR
+		string
+		prompt "libgomp shared library base directory"
+		depends on EXTERNAL_TOOLCHAIN && PACKAGE_libgomp
+		default TOOLCHAIN_ROOT  if !NATIVE_TOOLCHAIN
+		default "/"  if NATIVE_TOOLCHAIN
+
+	config LIBGOMP_FILE_SPEC
+		string
+		prompt "libgomp shared library files (use wildcards)"
+		depends on EXTERNAL_TOOLCHAIN && PACKAGE_libgomp
+		default "./lib/libgomp.so*"
+
+	endmenu
+endef
+
 
 define Package/ldd
 $(call Package/libc/Default)
@@ -323,9 +372,6 @@ LIBGCC_SO=$(lastword $(wildcard $(TOOLCHAIN_DIR)/lib/libgcc_s.so.*))
 define Build/Compile/uClibc
 	$(CP) \
 		$(TOOLCHAIN_DIR)/lib/libuClibc-*.so \
-		$(TOOLCHAIN_DIR)/lib/libcrypt-*.so \
-		$(TOOLCHAIN_DIR)/lib/libm-*.so \
-		$(TOOLCHAIN_DIR)/lib/libpthread-*.so \
 		$(PKG_BUILD_DIR)/
 endef
 ifneq ($(LIBGCC_SO),)
@@ -395,17 +441,8 @@ ifeq ($(CONFIG_EXTERNAL_TOOLCHAIN),)
 		$(TOOLCHAIN_DIR)/lib/libc.so.* \
 		$(TOOLCHAIN_DIR)/lib/libuClibc-$(LIBC_SO_VERSION).so \
 		$(1)/lib/
-	for file in libcrypt libdl libm libutil; do \
-		$(CP) \
-			$(TOOLCHAIN_DIR)/lib/$$$$file.so.* \
-			$(TOOLCHAIN_DIR)/lib/$$$$file-$(LIBC_SO_VERSION).so \
-			$(1)/lib/; \
-	done
-
 	$(CP) \
 		$(PKG_BUILD_DIR)/libuClibc-* \
-		$(PKG_BUILD_DIR)/libm-* \
-		$(PKG_BUILD_DIR)/libcrypt-* \
 		$(1)/lib/
   endef
 
@@ -437,7 +474,7 @@ ifeq ($(CONFIG_EXTERNAL_TOOLCHAIN),)
 
   define Package/libpthread/install
 	$(INSTALL_DIR) $(1)/lib
-  ifneq ($(CONFIG_USE_MUSL),y)
+  ifneq ($(CONFIG_USE_MUSL)$(CONFIG_USE_UCLIBC),y)
 	$(CP) \
 		$(TOOLCHAIN_DIR)/lib/libpthread.so.* \
 		$(TOOLCHAIN_DIR)/lib/libpthread-$(LIBC_SO_VERSION).so \
@@ -462,7 +499,7 @@ ifeq ($(CONFIG_EXTERNAL_TOOLCHAIN),)
 
   define Package/librt/install
 	$(INSTALL_DIR) $(1)/lib
-  ifneq ($(CONFIG_USE_MUSL),y)
+  ifneq ($(CONFIG_USE_MUSL)$(CONFIG_USE_UCLIBC),y)
 	$(CP) \
 		$(TOOLCHAIN_DIR)/lib/librt.so.* \
 		$(TOOLCHAIN_DIR)/lib/librt-$(LIBC_SO_VERSION).so \
@@ -529,6 +566,14 @@ else
 	exit 0
   endef
 
+  define Package/libthread-db/install
+	for file in $(call qstrip,$(CONFIG_LIBTHREAD_DB_FILE_SPEC)); do \
+		$(INSTALL_DIR) $(1)/lib ; \
+		$(CP) $(call qstrip,$(CONFIG_LIBTHREAD_DB_ROOT_DIR))/$$$$file $(1)/lib/ ; \
+	done ; \
+	exit 0
+  endef
+
   define Package/librt/install
 	for file in $(call qstrip,$(CONFIG_LIBRT_FILE_SPEC)); do \
 		$(INSTALL_DIR) $(1)/lib ; \
@@ -541,6 +586,14 @@ else
 	for file in $(call qstrip,$(CONFIG_LIBATOMIC_FILE_SPEC)); do \
 		$(INSTALL_DIR) $(1)/lib ; \
 		$(CP) $(call qstrip,$(CONFIG_LIBATOMIC_ROOT_DIR))/$$$$file $(1)/lib/ ; \
+	done ; \
+	exit 0
+  endef
+
+  define Package/libgomp/install
+	for file in $(call qstrip,$(CONFIG_LIBGOMP_FILE_SPEC)); do \
+		$(INSTALL_DIR) $(1)/lib ; \
+		$(CP) $(call qstrip,$(CONFIG_LIBGOMP_ROOT_DIR))/$$$$file $(1)/lib/ ; \
 	done ; \
 	exit 0
   endef
@@ -574,5 +627,6 @@ $(eval $(call BuildPackage,libpthread))
 $(eval $(call BuildPackage,libthread-db))
 $(eval $(call BuildPackage,librt))
 $(eval $(call BuildPackage,libgfortran))
+$(eval $(call BuildPackage,libgomp))
 $(eval $(call BuildPackage,ldd))
 $(eval $(call BuildPackage,ldconfig))

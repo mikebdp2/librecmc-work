@@ -101,14 +101,16 @@ my %dep_check;
 sub __find_package_dep($$) {
 	my $pkg = shift;
 	my $name = shift;
-	my $deps = ($pkg->{vdepends} or $pkg->{depends});
+	my $deps = $pkg->{depends};
 
 	return 0 unless defined $deps;
-	foreach my $dep (@{$deps}) {
-		next if $dep_check{$dep};
-		$dep_check{$dep} = 1;
-		return 1 if $dep eq $name;
-		return 1 if ($package{$dep} and (__find_package_dep($package{$dep},$name) == 1));
+	foreach my $vpkg (@{$deps}) {
+		foreach my $dep (@{$vpackage{$vpkg}}) {
+			next if $dep_check{$dep->{name}};
+			$dep_check{$dep->{name}} = 1;
+			return 1 if $dep->{name} eq $name;
+			return 1 if (__find_package_dep($dep, $name) == 1);
+		}
 	}
 	return 0;
 }
@@ -156,7 +158,6 @@ sub mconf_depends {
 		my $m = "depends on";
 		my $flags = "";
 		$depend =~ s/^([@\+]+)// and $flags = $1;
-		my $vdep;
 		my $condition = $parent_condition;
 
 		next if $condition eq $depend;
@@ -173,28 +174,26 @@ sub mconf_depends {
 			}
 			$depend = $2;
 		}
-		next if $package{$depend} and $package{$depend}->{buildonly};
 		if ($flags =~ /\+/) {
-			if ($vdep = $package{$depend}->{vdepends}) {
+			my $vdep = $vpackage{$depend};
+			if ($vdep) {
 				my @vdeps;
-				$depend = undef;
 
 				foreach my $v (@$vdep) {
-					if ($package{$v} && $package{$v}->{variant_default}) {
-						$depend = $v;
+					next if $v->{buildonly};
+					if ($v->{variant_default}) {
+						unshift @vdeps, $v->{name};
 					} else {
-						push @vdeps, $v;
+						push @vdeps, $v->{name};
 					}
 				}
 
-				if (!$depend) {
-					$depend = shift @vdeps;
-				}
+				$depend = shift @vdeps;
 
 				if (@vdeps > 1) {
-					$condition = ($condition ? "$condition && " : '') . '!('.join("||", map { "PACKAGE_".$_ } @vdeps).')';
+					$condition = ($condition ? "$condition && " : '') . join("&&", map { "PACKAGE_$_<PACKAGE_$pkgname" } @vdeps);
 				} elsif (@vdeps > 0) {
-					$condition = ($condition ? "$condition && " : '') . '!PACKAGE_'.$vdeps[0];
+					$condition = ($condition ? "$condition && " : '') . "PACKAGE_${vdeps[0]}<PACKAGE_$pkgname";
 				}
 			}
 
@@ -209,8 +208,9 @@ sub mconf_depends {
 
 			$flags =~ /@/ or $depend = "PACKAGE_$depend";
 		} else {
-			if ($vdep = $package{$depend}->{vdepends}) {
-				$depend = join("||", map { "PACKAGE_".$_ } @$vdep);
+			my $vdep = $vpackage{$depend};
+			if ($vdep && @$vdep > 0) {
+				$depend = join("||", map { "PACKAGE_".$_->{name} } @$vdep);
 			} else {
 				$flags =~ /@/ or $depend = "PACKAGE_$depend";
 			}
@@ -290,7 +290,7 @@ sub print_package_config_category($) {
 			print "menu \"$menu\"\n";
 		}
 		foreach my $pkg (@pkgs) {
-			next if $pkg->{ignore};
+			next if $pkg->{src}{ignore};
 			my $title = $pkg->{name};
 			my $c = (72 - length($pkg->{name}) - length($pkg->{title}));
 			if ($c > 0) {
@@ -337,31 +337,6 @@ sub print_package_config_category($) {
 	undef $category{$cat};
 }
 
-sub print_package_features() {
-	keys %features > 0 or return;
-	print "menu \"Package features\"\n";
-	foreach my $n (keys %features) {
-		my @features = sort { $b->{priority} <=> $a->{priority} or $a->{title} cmp $b->{title} } @{$features{$n}};
-		print <<EOF;
-choice
-	prompt "$features[0]->{target_title}"
-	default FEATURE_$features[0]->{name}
-EOF
-
-		foreach my $feature (@features) {
-			print <<EOF;
-	config FEATURE_$feature->{name}
-		bool "$feature->{title}"
-EOF
-			$feature->{description} =~ /\w/ and do {
-				print "\t\thelp\n".$feature->{description}."\n";
-			};
-		}
-		print "endchoice\n"
-	}
-	print "endmenu\n\n";
-}
-
 sub print_package_overrides() {
 	keys %overrides > 0 or return;
 	print "\tconfig OVERRIDE_PKGS\n";
@@ -372,24 +347,10 @@ sub print_package_overrides() {
 sub gen_package_config() {
 	parse_package_metadata($ARGV[0]) or exit 1;
 	print "menuconfig IMAGEOPT\n\tbool \"Image configuration\"\n\tdefault n\n";
-	foreach my $preconfig (keys %preconfig) {
-		foreach my $cfg (keys %{$preconfig{$preconfig}}) {
-			my $conf = $preconfig{$preconfig}->{$cfg}->{id};
-			$conf =~ tr/\.-/__/;
-			print <<EOF
-	config UCI_PRECONFIG_$conf
-		string "$preconfig{$preconfig}->{$cfg}->{label}" if IMAGEOPT
-		depends on PACKAGE_$preconfig
-		default "$preconfig{$preconfig}->{$cfg}->{default}"
-
-EOF
-		}
-	}
 	print "source \"package/*/image-config.in\"\n";
 	if (scalar glob "package/feeds/*/*/image-config.in") {
 	    print "source \"package/feeds/*/*/image-config.in\"\n";
 	}
-	print_package_features();
 	print_package_config_category 'Base system';
 	foreach my $cat (sort {uc($a) cmp uc($b)} keys %category) {
 		print_package_config_category $cat;
@@ -397,14 +358,30 @@ EOF
 	print_package_overrides();
 }
 
+sub and_condition($) {
+	my $condition = shift;
+	my @spl_and = split('\&\&', $condition);
+	if (@spl_and == 1) {
+		return "\$(CONFIG_$spl_and[0])";
+	}
+	return "\$(and " . join (',', map("\$(CONFIG_$_)", @spl_and)) . ")";
+}
+
+sub gen_condition ($) {
+	my $condition = shift;
+	# remove '!()', just as include/package-ipkg.mk does
+	$condition =~ s/[()!]//g;
+	return join("", map(and_condition($_), split('\|\|', $condition)));
+}
+
 sub get_conditional_dep($$) {
 	my $condition = shift;
 	my $depstr = shift;
 	if ($condition) {
 		if ($condition =~ /^!(.+)/) {
-			return "\$(if \$(CONFIG_$1),,$depstr)";
+			return "\$(if " . gen_condition($1) . ",,$depstr)";
 		} else {
-			return "\$(if \$(CONFIG_$condition),$depstr)";
+			return "\$(if " . gen_condition($condition) . ",$depstr)";
 		}
 	} else {
 		return $depstr;
@@ -412,174 +389,128 @@ sub get_conditional_dep($$) {
 }
 
 sub gen_package_mk() {
-	my %conf;
-	my %dep;
-	my %done;
 	my $line;
 
 	parse_package_metadata($ARGV[0]) or exit 1;
-	foreach my $name (sort {uc($a) cmp uc($b)} keys %package) {
-		my $config;
-		my $pkg = $package{$name};
-		my @srcdeps;
+	foreach my $srcname (sort {uc($a) cmp uc($b)} keys %srcpackage) {
+		my $src = $srcpackage{$srcname};
+		my $variant_default;
+		my %deplines = ('' => {});
 
-		next if defined $pkg->{vdepends};
+		foreach my $pkg (@{$src->{packages}}) {
+			foreach my $dep (@{$pkg->{depends}}) {
+				next if ($dep =~ /@/);
 
-		$config = "\$(CONFIG_PACKAGE_$name)";
-		if ($config) {
-			$pkg->{buildonly} and $config = "";
-			print "package-$config += $pkg->{subdir}$pkg->{src}\n";
-			if ($pkg->{variant}) {
-				if (!defined($done{$pkg->{src}}) or $pkg->{variant_default}) {
-					print "\$(curdir)/$pkg->{subdir}$pkg->{src}/default-variant := $pkg->{variant}\n";
+				my $condition;
+
+				$dep =~ s/\+//g;
+				if ($dep =~ /^(.+):(.+)/) {
+					$condition = $1;
+					$dep = $2;
 				}
-				print "\$(curdir)/$pkg->{subdir}$pkg->{src}/variants += \$(if $config,$pkg->{variant})\n"
+
+				my $vpkg_dep = $vpackage{$dep};
+				unless (defined $vpkg_dep) {
+					warn sprintf "WARNING: Makefile '%s' has a dependency on '%s', which does not exist\n",
+						$src->{makefile}, $dep;
+					next;
+				}
+
+				# Filter out self-depends
+				my @vdeps = grep { $srcname ne $_->{src}{name} } @{$vpkg_dep};
+
+				foreach my $vdep (@vdeps) {
+					my $depstr = sprintf '$(curdir)/%s/compile', $vdep->{src}{path};
+					if (@vdeps > 1) {
+						$depstr = sprintf '$(if $(CONFIG_PACKAGE_%s),%s)', $vdep->{name}, $depstr;
+					}
+					my $depline = get_conditional_dep($condition, $depstr);
+					if ($depline) {
+						$deplines{''}{$depline}++;
+					}
+				}
 			}
-			$pkg->{prereq} and print "prereq-$config += $pkg->{subdir}$pkg->{src}\n";
-		}
 
-		next if $done{$pkg->{src}};
-		$done{$pkg->{src}} = 1;
+			my $config = '';
+			$config = sprintf '$(CONFIG_PACKAGE_%s)', $pkg->{name} unless $pkg->{buildonly};
 
-		if (@{$pkg->{buildtypes}} > 0) {
-			print "buildtypes-$pkg->{subdir}$pkg->{src} = ".join(' ', @{$pkg->{buildtypes}})."\n";
-		}
+			$pkg->{prereq} and printf "prereq-%s += %s\n", $config, $src->{path};
 
-		foreach my $spkg (@{$srcpackage{$pkg->{src}}}) {
-			foreach my $dep (@{$spkg->{depends}}, @{$spkg->{builddepends}}) {
-				$dep =~ /@/ or do {
-					$dep =~ s/\+//g;
-					push @srcdeps, $dep;
-				};
+			next if $pkg->{buildonly};
+
+			printf "package-%s += %s\n", $config, $src->{path};
+
+			if ($pkg->{variant}) {
+				if (!defined($variant_default) or $pkg->{variant_default}) {
+					$variant_default = $pkg->{variant};
+				}
+				printf "\$(curdir)/%s/variants += \$(if %s,%s)\n", $src->{path}, $config, $pkg->{variant};
 			}
 		}
-		foreach my $type (@{$pkg->{buildtypes}}) {
-			my @extra_deps;
-			my %deplines;
 
-			next unless $pkg->{"builddepends/$type"};
-			foreach my $dep (@{$pkg->{"builddepends/$type"}}) {
-				my $suffix = "";
+		if (defined($variant_default)) {
+			printf "\$(curdir)/%s/default-variant := %s\n", $src->{path}, $variant_default;
+		}
+
+		unless (grep {!$_->{buildonly}} @{$src->{packages}}) {
+			printf "package- += %s\n", $src->{path};
+		}
+
+		if (@{$src->{buildtypes}} > 0) {
+			printf "buildtypes-%s = %s\n", $src->{path}, join(' ', @{$src->{buildtypes}});
+		}
+
+		foreach my $type ('', @{$src->{buildtypes}}) {
+			my $suffix = '';
+
+			$suffix = "/$type" if $type;
+
+			next unless $src->{"builddepends$suffix"};
+
+			defined $deplines{$suffix} or $deplines{$suffix} = {};
+
+			foreach my $dep (@{$src->{"builddepends$suffix"}}) {
+				my $depsuffix = "";
+				my $deptype = "";
 				my $condition;
 
 				if ($dep =~ /^(.+):(.+)/) {
 					$condition = $1;
 					$dep = $2;
 				}
-				if ($dep =~ /^(.+)(\/.+)/) {
+				if ($dep =~ /^(.+)\/(.+)/) {
 					$dep = $1;
-					$suffix = $2;
+					$deptype = $2;
+					$depsuffix = "/$2";
 				}
 
-				my $idx = "";
-				my $pkg_dep = $package{$dep};
-				if (defined($pkg_dep) && defined($pkg_dep->{src})) {
-					$idx = $pkg_dep->{subdir}.$pkg_dep->{src};
-				} elsif (defined($srcpackage{$dep})) {
-					$idx = $subdir{$dep}.$dep;
-				} else {
+				next if $srcname.$suffix eq $dep.$depsuffix;
+
+				my $src_dep = $srcpackage{$dep};
+				unless (defined($src_dep) && (!$deptype || grep { $_ eq $deptype } @{$src_dep->{buildtypes}})) {
+					warn sprintf "WARNING: Makefile '%s' has a build dependency on '%s', which does not exist\n",
+						$src->{makefile}, $dep.$depsuffix;
 					next;
 				}
-				my $depstr = "\$(curdir)/$idx$suffix/compile";
+
+				my $depstr = sprintf '$(curdir)/%s/compile', $src_dep->{path}.$depsuffix;
 				my $depline = get_conditional_dep($condition, $depstr);
 				if ($depline) {
-					$deplines{$depline}++;
+					$deplines{$suffix}{$depline}++;
 				}
 			}
-			my $depline = join(" ", sort keys %deplines);
+		}
+
+		foreach my $suffix (sort keys %deplines) {
+			my $depline = join(" ", sort keys %{$deplines{$suffix}});
 			if ($depline) {
-				$line .= "\$(curdir)/".$pkg->{subdir}."$pkg->{src}/$type/compile += $depline\n";
+				$line .= sprintf "\$(curdir)/%s/compile += %s\n", $src->{path}.$suffix, $depline;
 			}
-		}
-
-		my $hasdeps = 0;
-		my %deplines;
-		foreach my $deps (@srcdeps) {
-			my $idx;
-			my $condition;
-			my $prefix = "";
-			my $suffix = "";
-
-			if ($deps =~ /^(.+):(.+)/) {
-				$condition = $1;
-				$deps = $2;
-			}
-			if ($deps =~ /^(.+)(\/.+)/) {
-				$deps = $1;
-				$suffix = $2;
-			}
-
-			my $pkg_dep = $package{$deps};
-			my @deps;
-
-			if ($pkg_dep->{vdepends}) {
-				@deps = @{$pkg_dep->{vdepends}};
-			} else {
-				@deps = ($deps);
-			}
-
-			foreach my $dep (@deps) {
-				$pkg_dep = $package{$deps};
-				if (defined $pkg_dep->{src}) {
-					($pkg->{src} ne $pkg_dep->{src}.$suffix) and $idx = $pkg_dep->{subdir}.$pkg_dep->{src};
-				} elsif (defined($srcpackage{$dep})) {
-					$idx = $subdir{$dep}.$dep;
-				}
-				undef $idx if $idx eq 'base-files';
-				if ($idx) {
-					$idx .= $suffix;
-
-					my $depline;
-					next if $pkg->{src} eq $pkg_dep->{src}.$suffix;
-					next if $dep{$condition.":".$pkg->{src}."->".$idx};
-					next if $dep{$pkg->{src}."->($dep)".$idx} and $pkg_dep->{vdepends};
-					my $depstr;
-
-					if ($pkg_dep->{vdepends}) {
-						$depstr = "\$(if \$(CONFIG_PACKAGE_$dep),\$(curdir)/$idx/compile)";
-						$dep{$pkg->{src}."->($dep)".$idx} = 1;
-					} else {
-						$depstr = "\$(curdir)/$idx/compile";
-						$dep{$pkg->{src}."->".$idx} = 1;
-					}
-					$depline = get_conditional_dep($condition, $depstr);
-					if ($depline) {
-						$deplines{$depline}++;
-					}
-				}
-			}
-		}
-		my $depline = join(" ", sort keys %deplines);
-		if ($depline) {
-			$line .= "\$(curdir)/".$pkg->{subdir}."$pkg->{src}/compile += $depline\n";
 		}
 	}
 
 	if ($line ne "") {
 		print "\n$line";
-	}
-	foreach my $preconfig (keys %preconfig) {
-		my $cmds;
-		foreach my $cfg (keys %{$preconfig{$preconfig}}) {
-			my $conf = $preconfig{$preconfig}->{$cfg}->{id};
-			$conf =~ tr/\.-/__/;
-			$cmds .= "\techo \"uci set '$preconfig{$preconfig}->{$cfg}->{id}=\$(subst \",,\$(CONFIG_UCI_PRECONFIG_$conf))'\"; \\\n";
-		}
-		next unless $cmds;
-		print <<EOF
-
-ifndef DUMP_TARGET_DB
-\$(TARGET_DIR)/etc/uci-defaults/$preconfig: FORCE
-	( \\
-$cmds \\
-	) > \$@
-	
-ifneq (\$(IMAGEOPT)\$(CONFIG_IMAGEOPT),)
-  package/preconfig: \$(TARGET_DIR)/etc/uci-defaults/$preconfig
-endif
-endif
-
-EOF
 	}
 }
 
@@ -594,12 +525,39 @@ sub gen_package_source() {
 	}
 }
 
-sub gen_package_subdirs() {
+sub gen_package_auxiliary() {
 	parse_package_metadata($ARGV[0]) or exit 1;
 	foreach my $name (sort {uc($a) cmp uc($b)} keys %package) {
 		my $pkg = $package{$name};
 		if ($pkg->{name} && $pkg->{repository}) {
 			print "Package/$name/subdir = $pkg->{repository}\n";
+		}
+		if ($pkg->{name} && defined($pkg->{abiversion}) && length($pkg->{abiversion})) {
+			my $abiv;
+
+			if ($pkg->{abiversion} =~ m!^(\d{4})-(\d{2})-(\d{2})-[0-9a-f]{7,40}$!) {
+				print STDERR "WARNING: Reducing ABI version '$pkg->{abiversion}' of package '$name' to '$1$2$3'\n";
+				$abiv = "$1$2$3";
+			}
+			else {
+				$abiv = $pkg->{abiversion};
+			}
+
+			foreach my $n (@{$pkg->{provides}}) {
+				print "Package/$n/abiversion = $abiv\n";
+			}
+		}
+		my %depends;
+		foreach my $dep (@{$pkg->{depends} || []}) {
+			if ($dep =~ m!^\+?(?:[^:]+:)?([^@]+)$!) {
+				$depends{$1}++;
+			}
+		}
+		my @depends = sort keys %depends;
+		if (@depends > 0) {
+			foreach my $n (@{$pkg->{provides}}) {
+				print "Package/$n/depends = @depends\n";
+			}
 		}
 	}
 }
@@ -619,7 +577,7 @@ sub gen_package_license($) {
 			} else {
 				if ($level == 1) {
 					print "$pkg->{name}: Missing license! ";
-					print "Please fix $pkg->{makefile}\n";
+					print "Please fix $pkg->{src}{makefile}\n";
 				}
 			}
 		}
@@ -632,6 +590,16 @@ sub gen_version_filtered_list() {
 	}
 }
 
+sub gen_usergroup_list() {
+	parse_package_metadata($ARGV[0]) or exit 1;
+	for my $name (keys %usernames) {
+		print "user $name $usernames{$name}{id} $usernames{$name}{makefile}\n";
+	}
+	for my $name (keys %groupnames) {
+		print "group $name $groupnames{$name}{id} $groupnames{$name}{makefile}\n";
+	}
+}
+
 sub parse_command() {
 	GetOptions("ignore=s", \@ignore);
 	my $cmd = shift @ARGV;
@@ -640,9 +608,10 @@ sub parse_command() {
 		/^config$/ and return gen_package_config();
 		/^kconfig/ and return gen_kconfig_overrides();
 		/^source$/ and return gen_package_source();
-		/^subdirs$/ and return gen_package_subdirs();
+		/^pkgaux$/ and return gen_package_auxiliary();
 		/^license$/ and return gen_package_license(0);
 		/^licensefull$/ and return gen_package_license(1);
+		/^usergroup$/ and return gen_usergroup_list();
 		/^version_filter$/ and return gen_version_filtered_list();
 	}
 	die <<EOF
@@ -651,9 +620,10 @@ Available Commands:
 	$0 config [file] 			Package metadata in Kconfig format
 	$0 kconfig [file] [config] [patchver]	Kernel config overrides
 	$0 source [file] 			Package source file information
-	$0 subdirs [file]			Package subdir information in makefile format
+	$0 pkgaux [file]			Package auxiliary variables in makefile format
 	$0 license [file] 			Package license information
 	$0 licensefull [file] 			Package license information (full list)
+	$0 usergroup [file]			Package usergroup allocation list
 	$0 version_filter [patchver] [list...]	Filter list of version tagged strings
 
 Options:

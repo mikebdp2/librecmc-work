@@ -2,7 +2,6 @@
 
 [ -e /lib/firmware/$FIRMWARE ] && exit 0
 
-. /lib/ar71xx.sh
 . /lib/functions.sh
 . /lib/functions/system.sh
 
@@ -21,7 +20,7 @@ ath9k_eeprom_extract() {
 	[ -n "$mtd" ] || \
 		ath9k_eeprom_die "no mtd device found for partition $part"
 
-	dd if=$mtd of=/lib/firmware/$FIRMWARE bs=1 skip=$offset count=$count 2>/dev/null || \
+	dd if=$mtd of=/lib/firmware/$FIRMWARE iflag=skip_bytes bs=$count skip=$offset count=1 2>/dev/null || \
 		ath9k_eeprom_die "failed to extract from $mtd"
 }
 
@@ -36,8 +35,26 @@ ath9k_ubi_eeprom_extract() {
 	[ -n "$ubi" ] || \
 		ath9k_eeprom_die "no UBI volume found for $part"
 
-	dd if=/dev/$ubi of=/lib/firmware/$FIRMWARE bs=1 skip=$offset count=$count 2>/dev/null || \
+	dd if=/dev/$ubi of=/lib/firmware/$FIRMWARE iflag=skip_bytes bs=$count skip=$offset count=1 2>/dev/null || \
 		ath9k_eeprom_die "failed to extract from $ubi"
+}
+
+ath9k_eeprom_extract_reverse() {
+	local part=$1
+	local offset=$2
+	local count=$3
+	local mtd
+	local reversed
+	local caldata
+
+	mtd=$(find_mtd_chardev "$part")
+	reversed=$(hexdump -v -s $offset -n $count -e '/1 "%02x "' $mtd)
+
+	for byte in $reversed; do
+		caldata="\x${byte}${caldata}"
+	done
+
+	printf "%b" "$caldata" > /lib/firmware/$FIRMWARE
 }
 
 ath9k_patch_firmware_mac() {
@@ -45,10 +62,10 @@ ath9k_patch_firmware_mac() {
 
 	[ -z "$mac" ] && return
 
-	macaddr_2bin $mac | dd of=/lib/firmware/$FIRMWARE conv=notrunc bs=1 seek=2 count=6
+	macaddr_2bin $mac | dd of=/lib/firmware/$FIRMWARE conv=notrunc oflag=seek_bytes bs=6 seek=2 count=1
 }
 
-board=$(ar71xx_board_name)
+board=$(board_name)
 
 case "$FIRMWARE" in
 "soc_wmac.eeprom")
@@ -57,6 +74,10 @@ case "$FIRMWARE" in
 	c-60)
 		ath9k_eeprom_extract "art" 4096 2048
 		ath9k_patch_firmware_mac $(macaddr_add $(mtd_get_mac_binary art 0) +1)
+		;;
+	fritz4020|\
+	fritz450e)
+		ath9k_eeprom_extract_reverse "urlader" 5441 1088
 		;;
 	mr18)
 		. /lib/upgrade/nand.sh
@@ -73,6 +94,13 @@ case "$FIRMWARE" in
 	wndr4300)
 		ath9k_eeprom_extract "caldata" 4096 2048
 		ath9k_patch_firmware_mac $(mtd_get_mac_binary caldata 0)
+		;;
+	rambutan)
+		ath9k_eeprom_extract "art" 4096 2048
+		;;
+	wlr8100)
+		ath9k_eeprom_extract "art" 4096 2048
+		ath9k_patch_firmware_mac $(mtd_get_mac_ascii u-boot-env "ethaddr")
 		;;
 	z1)
 		. /lib/upgrade/nand.sh
@@ -95,6 +123,9 @@ case "$FIRMWARE" in
 	c-55)
 		ath9k_eeprom_extract "art" 20480 2048
 		ath9k_patch_firmware_mac $(macaddr_add $(mtd_get_mac_binary art 0) +2)
+		;;
+	fritz300e)
+		ath9k_eeprom_extract_reverse "urloader" 5441 1088
 		;;
 	mr18)
 		. /lib/upgrade/nand.sh

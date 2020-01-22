@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netifd
-PKG_RELEASE:=3
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL=$(PROJECT_GIT)/project/netifd.git
-PKG_SOURCE_DATE:=2018-02-05
-PKG_SOURCE_VERSION:=1be329c66326c86d7a48ba71004fcef7691bbbf9
-PKG_MIRROR_HASH:=06c1c24ed56b4fe39b92b33719f8bd4f9a8fe3c6a25ce02a6a245e859f1237bf
+PKG_SOURCE_URL=$(PROJECT_GIT)/netifd.git
+PKG_SOURCE_DATE:=2019-08-05
+PKG_SOURCE_VERSION:=5e02f94411b06f192fb2a7d9be9abde3549153a8
+PKG_MIRROR_HASH:=96e158584c605e96aceb3ce7e8ad8faa8e774ffd67d59558b2d6c2ff49d0f1a5
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 
 PKG_LICENSE:=GPL-2.0
@@ -22,12 +22,15 @@ define Package/netifd
   SECTION:=base
   CATEGORY:=Base system
   DEPENDS:=+libuci +libnl-tiny +libubus +ubus +ubusd +jshn +libubox
-  TITLE:=OpenWrt Network Interface Configuration Daemon
+  TITLE:=libreCMC Network Interface Configuration Daemon
 endef
 
 TARGET_CFLAGS += \
 	-I$(STAGING_DIR)/usr/include/libnl-tiny \
-	-I$(STAGING_DIR)/usr/include
+	-I$(STAGING_DIR)/usr/include \
+	-flto
+
+TARGET_LDFLAGS += -flto -fuse-linker-plugin
 
 CMAKE_OPTIONS += \
 	-DLIBNL_LIBS=-lnl-tiny \

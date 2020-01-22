@@ -2,6 +2,7 @@
  * jcgimage - Create a JCG firmware image
  *
  * Copyright (C) 2015 Reinhard Max <reinhard@m4x.de>
+ * Copyright (C) 2019 Davide Fioravanti <pantanastyle@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,6 +46,11 @@
  * requiring JTAG to revive the board. To prevent such bricking from
  * happening, this tool refuses to build such overlong images.
  *
+ * Using -m is possible to set the maximum size of the payload.
+ * Otherwise the default MAXSIZE will be used.
+ * For an 8Mb flash, the corresponding maxsize is:
+ * 8 * 1024 * 1024 - 5 * 64 * 1024 = 8388608 - 327680 = 8060928
+ *
  * Two more conditions have to be met for a JCG image to be accepted
  * as a valid update by the web interface of the stock firware:
  *
@@ -66,7 +72,7 @@
  * repack the original firmware after modifying the file systen,
  * e.g. to add debugging tools and enable shell access.
  *
- * In contrast, OpenWrt sysupgrade images consist of a uImage that
+ * In contrast, libreCMC sysupgrade images consist of a uImage that
  * only contains the kernel and has the rootfs appended to it. Hence,
  * the CRC over kernel and file system does not match the one in the
  * uImage header. Fixing this by adjusting the uImage header is not
@@ -92,6 +98,7 @@
 #include <sys/mman.h>
 #include <arpa/inet.h>
 #include <assert.h>
+#include <inttypes.h>
 
 /*
  * JCG Firmware image header
@@ -148,14 +155,28 @@ opensize(char *name, size_t *size)
 {
 	struct stat s;
 	int fd = open(name, O_RDONLY);
-	if (fd < 0) {
+	if (fd < 0)
 		err(1, "cannot open \"%s\"", name);
-	}
-	if (fstat(fd, &s) == -1) {
+
+	if (fstat(fd, &s) == -1)
 		err(1, "cannot stat \"%s\"", name);
-	}
+
 	*size = s.st_size;
 	return fd;
+}
+
+static time_t source_date_epoch = -1;
+static void set_source_date_epoch() {
+	char *env = getenv("SOURCE_DATE_EPOCH");
+	char *endptr = env;
+	errno = 0;
+        if (env && *env) {
+		source_date_epoch = strtoull(env, &endptr, 10);
+		if (errno || (endptr && *endptr != '\0')) {
+			fprintf(stderr, "Invalid SOURCE_DATE_EPOCH");
+			exit(1);
+		}
+        }
 }
 
 /*
@@ -167,17 +188,22 @@ mkjcgheader(struct jcg_header *h, size_t psize, char *version)
 	uLong crc;
 	uint16_t major = 0, minor = 0;
 	void *payload = (void *)h + sizeof(*h);
+	time_t t;
 
-	if (version != NULL) {
-		if (sscanf(version, "%hu.%hu", &major, &minor) != 2) {
+	if (source_date_epoch != -1)
+		t = source_date_epoch;
+	else if ((time(&t) == (time_t)(-1)))
+		err(1, "time call failed");
+
+
+	if (version != NULL)
+		if (sscanf(version, "%hu.%hu", &major, &minor) != 2)
 			err(1, "cannot parse version \"%s\"", version);
-		}
-	}
 
 	memset(h, 0, sizeof(*h));
 	h->jh_magic = htonl(JH_MAGIC);
 	h->jh_type  = htonl(1);
-	h->jh_time  = htonl(time(NULL));
+	h->jh_time  = htonl(t);
 	h->jh_major = htons(major);
 	h->jh_minor = htons(minor);
 
@@ -246,14 +272,14 @@ craftcrc(uint32_t dcrc, uint8_t *buf, size_t len)
 
 	a = ~dcrc;
 	for (i = 0; i < 32; i++) {
-		if (patch & 1) {
+		if (patch & 1)
 			patch = (patch >> 1) ^ 0xedb88320L;
-		} else {
+		else
 			patch >>= 1;
-		}
-		if (a & 1) {
+
+		if (a & 1)
 			patch ^= 0x5b358fd3L;
-		}
+
 		a >>= 1;
 	}
 	patch ^= ~crc32(crc, buf, len - 4);
@@ -264,17 +290,17 @@ craftcrc(uint32_t dcrc, uint8_t *buf, size_t len)
 	/* Verify that we actually get the desired result */
 	crc = crc32(0L, Z_NULL, 0);
 	crc = crc32(crc, buf, len);
-	if (crc != dcrc) {
+	if (crc != dcrc)
 		errx(1, "CRC patching is broken: wanted %08x, but got %08x.",
 		     dcrc, crc);
-	}
+
 }
 
 void
 usage() {
 	fprintf(stderr, "Usage:\n"
-		"jcgimage -o outfile -u uImage [-v version]\n"
-		"jcgimage -o outfile -k kernel -f rootfs [-v version]\n");
+		"jcgimage -o outfile -u uImage [-m maxsize] [-v version]\n"
+		"jcgimage -o outfile -k kernel -f rootfs [-m maxsize] [-v version]\n");
 	exit(1);
 }
 
@@ -295,6 +321,8 @@ main(int argc, char **argv)
 	char *file1 = NULL;
 	char *file2 = NULL;
 	char *version = NULL;
+	size_t maxsize = MAXSIZE;
+	char *endptr;
 	int mode = MODE_UNKNOWN;
 	int fdo, fd1, fd2;
 	size_t size1, size2, sizeu, sizeo, off1, off2;
@@ -303,32 +331,38 @@ main(int argc, char **argv)
 	/* Make sure the headers have the right size */
 	assert(sizeof(struct jcg_header) == 512);
 	assert(sizeof(struct uimage_header) == 64);
+	set_source_date_epoch();
 
-	while ((c = getopt(argc, argv, "o:k:f:u:v:h")) != -1) {
+	while ((c = getopt(argc, argv, "o:k:f:u:v:m:h")) != -1) {
 		switch (c) {
 		case 'o':
 			imagefile = optarg;
 			break;
 		case 'k':
-			if (mode == MODE_UIMAGE) {
+			if (mode == MODE_UIMAGE)
 				errx(1,"-k cannot be combined with -u");
-			}
+
 			mode = MODE_KR;
 			file1 = optarg;
 			break;
 		case 'f':
-			if (mode == MODE_UIMAGE) {
+			if (mode == MODE_UIMAGE)
 				errx(1,"-f cannot be combined with -u");
-			}
+
 			mode = MODE_KR;
 			file2 = optarg;
 			break;
 		case 'u':
-			if (mode == MODE_KR) {
+			if (mode == MODE_KR)
 				errx(1,"-u cannot be combined with -k and -r");
-			}
+
 			mode = MODE_UIMAGE;
 			file1 = optarg;
+			break;
+		case 'm':
+			if (optarg != NULL)
+				maxsize = strtoimax(optarg, &endptr, 10);
+
 			break;
 		case 'v':
 			version = optarg;
@@ -338,19 +372,19 @@ main(int argc, char **argv)
 			usage();
 		}
 	}
-	if (optind != argc) {
+	if (optind != argc)
 		errx(1, "illegal arg \"%s\"", argv[optind]);
-	}
-	if (imagefile == NULL) {
+
+	if (imagefile == NULL)
 		errx(1, "no output file specified");
-	}
-	if (mode == MODE_UNKNOWN) {
+
+	if (mode == MODE_UNKNOWN)
 		errx(1, "specify either -u or -k and -r");
-	}
+
 	if (mode == MODE_KR) {
-		if (file1 == NULL || file2 == NULL) {
-			errx(1,"need -k and -r");
-		}
+		if (file1 == NULL || file2 == NULL)
+			errx(1, "need -k and -r");
+
 		fd2 = opensize(file2, &size2);
 	}
 	fd1 = opensize(file1, &size1);
@@ -365,37 +399,37 @@ main(int argc, char **argv)
 		sizeo = sizeof(*jh) + sizeu;
 	}
 
-	if (sizeo > MAXSIZE) {
-		errx(1,"payload too large: %zd > %zd\n", sizeo, MAXSIZE);
-	}
+	if (sizeo > maxsize)
+		errx(1, "payload too large: %zd > %zd\n", sizeo, maxsize);
+
 
 	fdo = open(imagefile, O_RDWR | O_CREAT | O_TRUNC, 00644);
-	if (fdo < 0) {
+	if (fdo < 0)
 		err(1, "cannot open \"%s\"", imagefile);
-	}
 
-	if (ftruncate(fdo, sizeo) == -1) {
+
+	if (ftruncate(fdo, sizeo) == -1)
 		err(1, "cannot grow \"%s\" to %zd bytes", imagefile, sizeo);
-	}
+
 	map = mmap(NULL, sizeo, PROT_READ|PROT_WRITE, MAP_SHARED, fdo, 0);
 	uh = map + sizeof(*jh);
-	if (map == MAP_FAILED) {
+	if (map == MAP_FAILED)
 		err(1, "cannot mmap \"%s\"", imagefile);
-	}
 
-	if (read(fd1, map + off1, size1) != size1) {
+
+	if (read(fd1, map + off1, size1) != size1)
 		err(1, "cannot copy %s", file1);
-	}
+
 
 	if (mode == MODE_KR) {
-		if (read(fd2, map+off2, size2) != size2) {
+		if (read(fd2, map+off2, size2) != size2)
 			err(1, "cannot copy %s", file2);
-		}
+
 		mkuheader(uh, size1, size2);
-	} else if (mode == MODE_UIMAGE) {
+	} else if (mode == MODE_UIMAGE)
 		craftcrc(ntohl(uh->ih_dcrc), (void*)uh + sizeof(*uh),
 			 sizeu - sizeof(*uh));
-	}
+
 	mkjcgheader(map, sizeu, version);
 	munmap(map, sizeo);
 	close(fdo);

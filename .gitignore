@@ -16,6 +16,7 @@
 /overlay
 /package/feeds
 /package/openwrt-packages
+/*.patch
 key-build*
 *.orig
 *.rej
@@ -30,3 +31,4 @@ git-src
 *.swp
 *.po~
 /package/luci/modules/luci-base/src/po2lmo
+/package/luci/modules/luci-base/src/jsmin
