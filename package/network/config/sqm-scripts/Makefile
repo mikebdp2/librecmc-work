@@ -14,7 +14,7 @@ PKG_RELEASE:=3
 PKG_LICENSE:=GPLv2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.xz
-PKG_MIRROR_HASH:=6e8ce29ba398c14fe679ea95fe03c785d7b5357d515b988360b4cc8be68b7e59
+PKG_MIRROR_HASH:=00bc93f667ad417d4ba9bea4a01d87e3c670a294f61de13348a0f71e7700241f
 PKG_SOURCE_URL:=https://github.com/tohojo/sqm-scripts.git
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
@@ -51,7 +51,7 @@ define Package/luci-app-sqm
   TITLE:=SQM Scripts - LuCI interface
   MAINTAINER:=Toke Høiland-Jørgensen <toke@toke.dk>
   PKGARCH:=all
-  DEPENDS:=+luci-compat +sqm-scripts
+  DEPENDS:=+lua +luci-base +sqm-scripts
   SUBMENU:=3. Applications
 endef
 
