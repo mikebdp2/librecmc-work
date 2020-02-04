@@ -18,20 +18,20 @@
 
 See our [flavors](https://librecmc.org/flavors.html) page for a description of each type of libreCMC image.
 
-## Legacy
+## Tiny
 
-[TL-WR741ND v4.20+ Factory](https://librecmc.org/librecmc/downloads/snapshots/current/legacy/ar71xx/generic/librecmc-ar71xx-generic-tl-wr741nd-v4-squashfs-factory.bin)
+[TL-WR741ND v4.20+ Factory](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/librecmc-ath79-tiny-tplink_tl-wr741nd-v4-squashfs-factory.bin)
 
-[TL-WR741ND v4.20+ Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/legacy/ar71xx/generic/librecmc-ar71xx-generic-tl-wr741nd-v4-squashfs-sysupgrade.bin)
+[TL-WR741ND v4.20+ Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/librecmc-ath79-tiny-tplink_tl-wr741nd-v4-squashfs-sysupgrade.bin)
 
-[TL-WR741ND v5 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/legacy/ar71xx/generic/librecmc-ar71xx-generic-tl-wr741nd-v5-squashfs-factory.bin)
+#[TL-WR741ND v5 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/librecmc-ath79-tiny-tplink_tl-wr741nd-v5-squashfs-factory.bin)
 
-[TL-WR741ND v5 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/legacy/ar71xx/generic/librecmc-ar71xx-generic-tl-wr741nd-v5-squashfs-sysupgrade.bin)
+#[TL-WR741ND v5 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/librecmc-ath79-tiny-tplink_tl-wr741nd-v5-squashfs-sysupgrade.bin)
 
 
 ## Image File Signatures
 
-[Legacy sha256sums](https://librecmc.org/librecmc/downloads/snapshots/current/legacy/ar71xx/generic/sha256sums)
+[Tiny sha256sums](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/sha256sums)
 
-[Legacy sha256sums.asc](https://librecmc.org/librecmc/downloads/snapshots/current/legacy/ar71xx/generic/sha256sums.asc)
+[Tiny sha256sums.asc](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/sha256sums.asc)
 
