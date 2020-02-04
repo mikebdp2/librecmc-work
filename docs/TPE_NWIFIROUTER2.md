@@ -25,24 +25,24 @@ See our [flavors](https://librecmc.org/flavors.html) page for a description of e
 
 ## Legacy
 
-[TL-WR841n[d] v8 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/legacy/ar71xx/generic/librecmc-ar71xx-generic-tl-wr841-v8-squashfs-factory.bin)
+[TL-WR841n[d] v8 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/librecmc-ath79-tiny-tplink_tl-wr841-v8-squashfs-factory.bin)
 
-[TL-WR841n[d] v8 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/legacy/ar71xx/generic/librecmc-ar71xx-generic-tl-wr841-v8-squashfs-sysupgrade.bin)
+[TL-WR841n[d] v8 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/librecmc-ath79-tiny-tplink_tl-wr841-v8-squashfs-sysupgrade.bin)
 
 ## Core
 
-[TL-WR841n[d] v8 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/core/ar71xx/generic/librecmc-ar71xx-generic-tl-wr841-v8-squashfs-factory.bin)
+[TL-WR841n[d] v8 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/core/ath79/tiny/librecmc-ath79-tiny-tplink_tl-wr841-v8-squashfs-factory.bin)
 
-[TL-WR841n[d] v8 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/core/ar71xx/generic/librecmc-ar71xx-generic-tl-wr841-v8-squashfs-sysupgrade.bin)
+[TL-WR841n[d] v8 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/core/ath79/tiny/librecmc-ar71xx-tiny-tplink_tl-wr841-v8-squashfs-sysupgrade.bin)
 
 
 ## Image File Signatures 
 
-[Legacy sha256sums](https://librecmc.org/librecmc/downloads/snapshots/current/legacy/ar71xx/generic/sha256sums)
+[Tiny sha256sums](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/sha256sums)
 
-[Legacy sha256sums.asc](https://librecmc.org/librecmc/downloads/snapshots/current/legacy/ar71xx/generic/sha256sums.asc)
+[Tiny sha256sums.asc](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/sha256sums.asc)
 
 
-[Core sha256sums](https://librecmc.org/librecmc/downloads/snapshots/current/core/ar71xx/generic/sha256sums)
+[Core sha256sums](https://librecmc.org/librecmc/downloads/snapshots/current/core/ath79/tiny/sha256sums)
 
-[Core sha256sums.asc](https://librecmc.org/librecmc/downloads/snapshots/current/core/ar71xx/generic/sha256sums.asc)
+[Core sha256sums.asc](https://librecmc.org/librecmc/downloads/snapshots/current/core/ath79/tiny/sha256sums.asc)
