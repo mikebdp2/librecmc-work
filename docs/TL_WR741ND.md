@@ -20,9 +20,9 @@ See our [flavors](https://librecmc.org/flavors.html) page for a description of e
 
 ## Tiny
 
-[TL-WR741ND v4.20+ Factory](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/librecmc-ath79-tiny-tplink_tl-wr741nd-v4-squashfs-factory.bin)
+[TL-WR741ND v4.20+ Factory](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/tiny/librecmc-ath79-tiny-tplink_tl-wr741nd-v4-squashfs-factory.bin)
 
-[TL-WR741ND v4.20+ Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/librecmc-ath79-tiny-tplink_tl-wr741nd-v4-squashfs-sysupgrade.bin)
+[TL-WR741ND v4.20+ Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/tiny/librecmc-ath79-tiny-tplink_tl-wr741nd-v4-squashfs-sysupgrade.bin)
 
 #[TL-WR741ND v5 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/librecmc-ath79-tiny-tplink_tl-wr741nd-v5-squashfs-factory.bin)
 
@@ -31,7 +31,7 @@ See our [flavors](https://librecmc.org/flavors.html) page for a description of e
 
 ## Image File Signatures
 
-[Tiny sha256sums](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/sha256sums)
+[Tiny sha256sums](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/tiny/sha256sums)
 
-[Tiny sha256sums.asc](https://librecmc.org/librecmc/downloads/snapshots/current/main/ath79/tiny/sha256sums.asc)
+[Tiny sha256sums.asc](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/tiny/sha256sums.asc)
 
