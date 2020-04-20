@@ -24,7 +24,7 @@ method which is required for the initial install of libreCMC.
 ### ThinkPenguin
 * [TPE-NWIFIROUTER2](/TPE_NWIFIROUTER2.md)
 * [TPE-R1100](/TPE_R1100.md)
-* TPE-R1200
+* [TPE-R1200](/TPE_R1200.md)
 
 ### Qi-Hardware
 
