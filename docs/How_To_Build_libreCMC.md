@@ -47,7 +47,9 @@ when configuring your build of libreCMC.
 
  `make menuconfig` 
 
- When configuring libreCMC for your device, it is imperative that the right target and profile are selected. Currently, we only _officially_ support the AR71XX target and the TP-Link TL-MR3020 and Netgear WNDR3800. If you want other packages, please keep in mind that these devices don't have very much in terms of flash ROM and your selection of packages may not work properly. Generally, a good default configuration includes:
+ When configuring libreCMC for your device, it is imperative that the right target and profile are selected. Currently, we only _officially_ support `ath79` targets or devices listed
+on the [supported hardware](Supported_Hardware.md) list. If you want other packages, please keep in mind that these devices don't have very much in terms of flash ROM and your selection 
+of packages may not work properly. Generally, a good default configuration includes:
 
 
  * luci : Collections -> luci  + luci -> protocols -> luci-proto-relayd
