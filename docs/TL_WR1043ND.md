@@ -5,6 +5,7 @@
 v1.x
 
 * SoC : Atheros AR9103
+* SoC CPU Speed: 400 MHz
 * Flash ROM : 8 MiB
 * RAM : 32 MB
 * USB : 1
@@ -13,6 +14,7 @@ v1.x
 v2.x
 
 * SoC : Qualcomm Atheros QCA9558
+* SoC CPU Speed: 720 MHz
 * Flash ROM : 8 MiB
 * RAM : 64 MB
 * USB : 1
@@ -25,6 +27,7 @@ Similar to v2.x
 v4.x
 
 * SoC : Qualcomm Atheros QCA9563
+* SoC CPU Speed: 750 MHz
 * Flash ROM : 16 MB
 * RAM : 64 MB
 * USB : 1
@@ -33,11 +36,12 @@ v4.x
 
 v5.x (TL-WR1043N v5)
 
-Similar to v4.x
-
+* SoC : Qualcomm Atheros QCA9563
+* SoC CPU Speed: 775 MHz
+* Flash ROM : 16 MB
+* RAM : 64 MB
 * No USB
-* libreCMC images available but have *Not* been tested!
-* Most likely needs to be TFTP flashed
+* Needs to be TFTP flashed
 
 ## Supported Versions:
 
@@ -45,7 +49,7 @@ Similar to v4.x
 * v2.x
 * v3.x
 * v4.x
-* v5.x : images available, *Not Tested*
+* v5.x
 
 # Reset instructions
 
@@ -65,25 +69,21 @@ See our [flavors](https://librecmc.org/flavors.html) page for a description of e
 
 [TL-WR1043ND v1 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v1-squashfs-sysupgrade.bin)
 
-
 [TL-WR1043ND v2 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-factory.bin)
 
 [TL-WR1043ND v2 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-sysupgrade.bin)
-
 
 [TL-WR1043ND v3 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v3-squashfs-factory.bin)
 
 [TL-WR1043ND v3 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v3-squashfs-sysupgrade.bin)
 
-
 [TL-WR1043ND v4 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-factory.bin)
 
 [TL-WR1043ND v4 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-sysupgrade.bin)
 
+[TL-WR1043N v5 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043n-v5-squashfs-factory.bin)
 
-[TL-WR1043N v5 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043n-v5-squashfs-factory.bin) *NOT TESTED!!
-
-[TL-WR1043N v5 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043n-v5-squashfs-sysupgrade.bin) *NOT TESTED!!
+[TL-WR1043N v5 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/main/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043n-v5-squashfs-sysupgrade.bin)
 
 ## Core Images
 
@@ -91,25 +91,21 @@ See our [flavors](https://librecmc.org/flavors.html) page for a description of e
 
 [TL-WR1043ND v1 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/core/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v1-squashfs-sysupgrade.bin)
 
-
 [TL-WR1043ND v2 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/core/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-factory.bin)
 
 [TL-WR1043ND v2 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/core/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-sysupgrade.bin)
-
 
 [TL-WR1043ND v3 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/core/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v3-squashfs-factory.bin)
 
 [TL-WR1043ND v3 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/core/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v3-squashfs-sysupgrade.bin)
 
-
 [TL-WR1043ND v4 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/core/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-factory.bin)
 
 [TL-WR1043ND v4 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/core/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-sysupgrade.bin)
 
+[TL-WR1043N v5 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/core/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043n-v5-squashfs-factory.bin)
 
-[TL-WR1043N v5 Factory](https://librecmc.org/librecmc/downloads/snapshots/current/core/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043n-v5-squashfs-factory.bin) *NOT TESTED!!
-
-[TL-WR1043N v5 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/core/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043n-v5-squashfs-sysupgrade.bin) *NOT TESTED!!
+[TL-WR1043N v5 Sysupgrade](https://librecmc.org/librecmc/downloads/snapshots/current/core/targets/ath79/generic/librecmc-ath79-generic-tplink_tl-wr1043n-v5-squashfs-sysupgrade.bin)
 
 ## Image File Signatures 
 
