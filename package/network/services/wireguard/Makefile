@@ -11,12 +11,12 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=wireguard
 
-PKG_VERSION:=1.0.20200330
+PKG_VERSION:=1.0.20200623
 PKG_RELEASE:=1
 
 PKG_SOURCE:=wireguard-linux-compat-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://git.zx2c4.com/wireguard-linux-compat/snapshot/
-PKG_HASH:=2d57b239605be2ee0e4c2da935ff1a23e9ed8bb3ee692e10ae032ae50f280bef
+PKG_HASH:=130937724515799edf05ff8216bc837df8acda879428f3a7f96a3287758f9445
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
@@ -35,7 +35,9 @@ define Package/wireguard/Default
   CATEGORY:=Network
   SUBMENU:=VPN
   URL:=https://www.wireguard.com
-  MAINTAINER:=Jason A. Donenfeld <Jason@zx2c4.com>
+  MAINTAINER:=Jason A. Donenfeld <Jason@zx2c4.com> \
+              Kevin Darbyshire-Bryant <ldir@darbyshire-bryant.me.uk>
+
 endef
 
 define Package/wireguard/Default/description
