@@ -271,6 +271,24 @@ foreach my $mirror (@ARGV) {
 
 push @mirrors, 'https://librecmc.org/librecmc/downloads/sources/v1.5';
 
+if (-f "$target/$filename") {
+	$hash_cmd and do {
+		if (system("cat '$target/$filename' | $hash_cmd > '$target/$filename.hash'")) {
+			die "Failed to generate hash for $filename\n";
+		}
+
+		my $sum = `cat "$target/$filename.hash"`;
+		$sum =~ /^(\w+)\s*/ or die "Could not generate file hash\n";
+		$sum = $1;
+
+		exit 0 if $sum eq $file_hash;
+
+		die "Hash of the local file $filename does not match (file: $sum, requested: $file_hash) - deleting download.\n";
+		unlink "$target/$filename";
+		cleanup();
+	};
+}
+
 while (!-f "$target/$filename") {
 	my $mirror = shift @mirrors;
 	$mirror or die "No more mirrors to try - giving up.\n";
