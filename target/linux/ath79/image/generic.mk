@@ -480,6 +480,12 @@ define Device/thinkpenguin_tpe-r1200-nor
 endef
 TARGET_DEVICES += thinkpenguin_tpe-r1200-nor
 
+define Device/thinkpenguin_tpe-r1300
+  $(Device/glinet_gl-ar300m-common-nor)
+  DEVICE_TITLE := ThinkPenguin TPE-R1300
+endef
+TARGET_DEVICES += thinkpenguin_tpe-r1300
+
 define Device/wd_mynet-n750
   $(Device/seama)
   ATH_SOC := ar9344
