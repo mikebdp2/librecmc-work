@@ -19,7 +19,7 @@ endef
 define Device/linksys_wrt1900ac
   $(call Device/linksys,WRT1900AC (Mamba))
   DEVICE_DTS := armada-xp-linksys-mamba
-  DEVICE_PACKAGES := kmod-ath9k
+  DEVICE_PACKAGES := kmod-ath9k swconfig
   KERNEL_SIZE := 3072k
   SUPPORTED_DEVICES := armada-xp-linksys-mamba linksys,mamba
 endef
@@ -33,7 +33,7 @@ define Device/cznic_turris-omnia
   DEVICE_PACKAGES :=  \
     mkf2fs e2fsprogs kmod-fs-vfat kmod-nls-cp437 kmod-nls-iso8859-1 \
     wpad-basic kmod-ath9k partx-utils kmod-i2c-core kmod-i2c-mux \
-    kmod-i2c-mux-pca954x
+    kmod-i2c-mux-pca954x swconfig
   IMAGES := $$(IMAGE_PREFIX)-sysupgrade.img.gz omnia-medkit-$$(IMAGE_PREFIX)-initramfs.tar.gz
   IMAGE/$$(IMAGE_PREFIX)-sysupgrade.img.gz := boot-img | sdcard-img | gzip | append-metadata
   IMAGE/omnia-medkit-$$(IMAGE_PREFIX)-initramfs.tar.gz := omnia-medkit-initramfs | gzip
