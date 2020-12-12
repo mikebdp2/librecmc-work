@@ -13,10 +13,10 @@ PKG_VERSION:=0.5.3.r$(PKG_REV)
 PKG_RELEASE:=9
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://svn.unix-ag.uni-kl.de/vpnc/trunk/
+PKG_SOURCE_URL:=https://librecmc.org/librecmc/downloads/sources/v1.5/
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_VERSION:=$(PKG_REV)
-PKG_SOURCE_PROTO:=svn
+PKG_HASH:=b52f12880777ae0dccb58dae56ef7b7a30dc0f45ba796dfc0a74de64eb53d130
 
 PKG_MAINTAINER:=Daniel Gimpelevich <daniel@gimpelevich.san-francisco.ca.us>
 PKG_LICENSE:=VARIOUS
