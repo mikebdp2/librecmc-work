@@ -159,7 +159,7 @@ $(eval $(call SetupHostCommand,file,Please install the 'file' package, \
 
 $(STAGING_DIR_HOST)/bin/mkhash: $(SCRIPT_DIR)/mkhash.c
 	mkdir -p $(dir $@)
-	$(CC) -O2 -I$(TOPDIR)/tools/include -o $@ $<
+	$(CC) -I$(TOPDIR)/tools/include -o $@ $<
 
 prereq: $(STAGING_DIR_HOST)/bin/mkhash
 

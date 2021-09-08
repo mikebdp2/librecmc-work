@@ -60,15 +60,15 @@ else
   LINUX_KERNEL:=$(KERNEL_BUILD_DIR)/vmlinux
 
   ifneq (,$(findstring -rc,$(LINUX_VERSION)))
-      LINUX_SOURCE:=linux-libre-$(LINUX_VERSION)-gnu.tar.gz
+      LINUX_SOURCE:=linux-libre-$(LINUX_VERSION)-gnu$(LIBRE_REV).tar.gz
   else
-      LINUX_SOURCE:=linux-libre-$(LINUX_VERSION)-gnu.tar.xz
+      LINUX_SOURCE:=linux-libre-$(LINUX_VERSION)-gnu$(LIBRE_REV).tar.xz
   endif
 
   ifneq (,$(findstring -rc,$(LINUX_VERSION)))
       LINUX_SITE:=
   else ifeq ($(call qstrip,$(CONFIG_EXTERNAL_KERNEL_TREE))$(call qstrip,$(CONFIG_KERNEL_GIT_CLONE_URI)),)
-      LINUX_SITE:=@KERNEL_LIBRE/$(LINUX_VERSION)-gnu$(TESTING)
+      LINUX_SITE:=@KERNEL_LIBRE/$(LINUX_VERSION)-gnu$(LIBRE_REV)$(TESTING)
   else
       LINUX_UNAME_VERSION:=$(strip $(shell cat $(LINUX_DIR)/include/config/kernel.release 2>/dev/null))
   endif

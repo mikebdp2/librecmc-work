@@ -6,11 +6,11 @@ ifdef CONFIG_TESTING_KERNEL
   KERNEL_PATCHVER:=$(KERNEL_TESTING_PATCHVER)
 endif
 
-LINUX_VERSION-4.14 = .238
-
+LINUX_VERSION-4.14 = .246
+LIBRE_REV = 1
 
 LINUX_KERNEL_HASH-4.14.238 = e1c6ed86040fb7e2009c1b88a87201058919d0b172858f17a85f800be7ac7251
-
+LINUX_KERNEL_HASH-4.14.246 = 43a2bd7b69af6f37b9bb1677850ec2cb3d54aacbb8f275895c8d2a9e3a3ada18
 
 remove_uri_prefix=$(subst git://,,$(subst http://,,$(subst https://,,$(1))))
 sanitize_uri=$(call qstrip,$(subst @,_,$(subst :,_,$(subst .,_,$(subst -,_,$(subst /,_,$(1)))))))
