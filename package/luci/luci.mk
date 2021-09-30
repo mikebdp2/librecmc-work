@@ -169,7 +169,7 @@ endef
 
 define JsMin
 	$(FIND) $(1) -type f -name '*.js' | while read src; do \
-		if jsmin < "$$$$src" > "$$$$src.o"; \
+		if python3 -m jsmin "$$$$src" > "$$$$src.o"; \
 		then mv "$$$$src.o" "$$$$src"; fi; \
 	done
 endef

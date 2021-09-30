@@ -4,9 +4,6 @@
 clean:
 	rm -f po2lmo parser.so version.lua *.o
 
-jsmin: jsmin.o
-	$(CC) $(LDFLAGS) -o $@ $^
-
 po2lmo: po2lmo.o template_lmo.o
 	$(CC) $(LDFLAGS) -o $@ $^
 
