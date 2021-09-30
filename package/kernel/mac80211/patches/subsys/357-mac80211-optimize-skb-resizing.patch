@@ -24,7 +24,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
 
 --- a/net/mac80211/ieee80211_i.h
 +++ b/net/mac80211/ieee80211_i.h
-@@ -1762,6 +1762,9 @@ void ieee80211_clear_fast_xmit(struct st
+@@ -1750,6 +1750,9 @@ void ieee80211_clear_fast_xmit(struct st
  int ieee80211_tx_control_port(struct wiphy *wiphy, struct net_device *dev,
  			      const u8 *buf, size_t len,
  			      const u8 *dest, __be16 proto, bool unencrypted);
@@ -50,7 +50,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  	if (WARN_ON_ONCE(skb_headroom(skb) < rtap_len)) {
 --- a/net/mac80211/tx.c
 +++ b/net/mac80211/tx.c
-@@ -1914,42 +1914,53 @@ static bool ieee80211_tx(struct ieee8021
+@@ -1920,42 +1920,53 @@ static bool ieee80211_tx(struct ieee8021
  }
  
  /* device xmit handlers */
@@ -129,7 +129,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  		wiphy_debug(local->hw.wiphy,
  			    "failed to reallocate TX buffer\n");
  		return -ENOMEM;
-@@ -1964,24 +1975,9 @@ void ieee80211_xmit(struct ieee80211_sub
+@@ -1970,24 +1981,9 @@ void ieee80211_xmit(struct ieee80211_sub
  {
  	struct ieee80211_local *local = sdata->local;
  	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
@@ -156,7 +156,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  		ieee80211_free_txskb(&local->hw, skb);
  		return;
  	}
-@@ -2752,30 +2748,14 @@ static struct sk_buff *ieee80211_build_h
+@@ -2758,30 +2754,14 @@ static struct sk_buff *ieee80211_build_h
  
  	skb_pull(skb, skip_header_bytes);
  	padsize = ieee80211_hdr_padsize(&local->hw, hdrlen);
@@ -193,7 +193,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  	}
  
  	if (encaps_data)
-@@ -3388,7 +3368,6 @@ static bool ieee80211_xmit_fast(struct i
+@@ -3396,7 +3376,6 @@ static bool ieee80211_xmit_fast(struct i
  	struct ieee80211_local *local = sdata->local;
  	u16 ethertype = (skb->data[12] << 8) | skb->data[13];
  	int extra_head = fast_tx->hdr_len - (ETH_HLEN - 2);
@@ -201,7 +201,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  	struct ethhdr eth;
  	struct ieee80211_tx_info *info;
  	struct ieee80211_hdr *hdr = (void *)fast_tx->hdr;
-@@ -3440,10 +3419,7 @@ static bool ieee80211_xmit_fast(struct i
+@@ -3448,10 +3427,7 @@ static bool ieee80211_xmit_fast(struct i
  	 * as the may-encrypt argument for the resize to not account for
  	 * more room than we already have in 'extra_head'
  	 */
