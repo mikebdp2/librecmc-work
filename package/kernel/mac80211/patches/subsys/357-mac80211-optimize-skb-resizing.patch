@@ -156,7 +156,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  		ieee80211_free_txskb(&local->hw, skb);
  		return;
  	}
-@@ -2758,30 +2754,14 @@ static struct sk_buff *ieee80211_build_h
+@@ -2762,30 +2758,14 @@ static struct sk_buff *ieee80211_build_h
  
  	skb_pull(skb, skip_header_bytes);
  	padsize = ieee80211_hdr_padsize(&local->hw, hdrlen);
@@ -193,7 +193,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  	}
  
  	if (encaps_data)
-@@ -3396,7 +3376,6 @@ static bool ieee80211_xmit_fast(struct i
+@@ -3408,7 +3388,6 @@ static bool ieee80211_xmit_fast(struct i
  	struct ieee80211_local *local = sdata->local;
  	u16 ethertype = (skb->data[12] << 8) | skb->data[13];
  	int extra_head = fast_tx->hdr_len - (ETH_HLEN - 2);
@@ -201,7 +201,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  	struct ethhdr eth;
  	struct ieee80211_tx_info *info;
  	struct ieee80211_hdr *hdr = (void *)fast_tx->hdr;
-@@ -3448,10 +3427,7 @@ static bool ieee80211_xmit_fast(struct i
+@@ -3460,10 +3439,7 @@ static bool ieee80211_xmit_fast(struct i
  	 * as the may-encrypt argument for the resize to not account for
  	 * more room than we already have in 'extra_head'
  	 */
