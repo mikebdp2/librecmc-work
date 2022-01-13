@@ -8,22 +8,22 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libgpg-error
-PKG_VERSION:=1.36
-PKG_RELEASE:=3
+PKG_VERSION:=1.42
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://mirrors.dotsrc.org/gcrypt/libgpg-error \
 		http://ring.ksc.gr.jp/archives/net/gnupg/libgpg-error \
 		https://www.gnupg.org/ftp/gcrypt/libgpg-error
-PKG_HASH:=babd98437208c163175c29453f8681094bcaf92968a15cafb1a276076b33c97c
+PKG_HASH:=fc07e70f6c615f8c4f590a8e37a9b8dd2e2ca1e9408f8e60459c67452b925e23
 
 PKG_MAINTAINER:=W. Michael Petullo <mike@flyn.org>
 PKG_LICENSE:=LGPL-2.1-or-later
 PKG_LICENSE_FILES:=COPYING
 
-PKG_BUILD_PARALLEL:=1
-PKG_INSTALL:=1
 PKG_FIXUP:=autoreconf
+PKG_INSTALL:=1
+PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -60,9 +60,21 @@ define Build/InstallDev
 		$(2)/bin/gpg-error-config
 	ln -sf $(STAGING_DIR)/host/bin/gpg-error-config $(1)/usr/bin/gpg-error-config
 
+	$(INSTALL_BIN) \
+		$(PKG_INSTALL_DIR)/usr/bin/gpgrt-config \
+		$(2)/bin/
+	$(SED) \
+		's,^\(prefix\|exec_prefix\)=.*,\1=$(STAGING_DIR)/usr,g' \
+		$(2)/bin/gpgrt-config
+	ln -sf $(STAGING_DIR)/host/bin/gpgrt-config $(1)/usr/bin/gpgrt-config
+
 	$(INSTALL_DIR) $(1)/usr/include
 	$(INSTALL_DATA) \
 		$(PKG_INSTALL_DIR)/usr/include/gpg-error.h \
+		$(1)/usr/include/
+
+	$(INSTALL_DATA) \
+		$(PKG_INSTALL_DIR)/usr/include/gpgrt.h \
 		$(1)/usr/include/
 
 	$(INSTALL_DIR) $(1)/usr/lib
@@ -73,6 +85,10 @@ define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/share/aclocal
 	$(INSTALL_DATA) \
 		$(PKG_INSTALL_DIR)/usr/share/aclocal/gpg-error.m4 \
+		$(1)/usr/share/aclocal/
+
+	$(INSTALL_DATA) \
+		$(PKG_INSTALL_DIR)/usr/share/aclocal/gpgrt.m4 \
 		$(1)/usr/share/aclocal/
 endef
 
