@@ -20,7 +20,7 @@ Signed-off-by: Gert Doering <gert@greenie.muc.de>
 
 --- a/configure.ac
 +++ b/configure.ac
-@@ -904,6 +904,7 @@ if test "${enable_crypto}" = "yes" -a "$
+@@ -898,6 +898,7 @@ if test "${enable_crypto}" = "yes" -a "$
  			EVP_MD_CTX_free \
  			EVP_MD_CTX_reset \
  			EVP_CIPHER_CTX_reset \
