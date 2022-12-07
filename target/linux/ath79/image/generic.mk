@@ -1709,6 +1709,26 @@ define Device/teltonika_rut955-h7v3c0
 endef
 TARGET_DEVICES += teltonika_rut955-h7v3c0
 
+define Device/thinkpenguin_tpe-r1100
+  SOC := ar9330
+  DEVICE_VENDOR := ThinkPenguin
+  DEVICE_MODEL := TPE-R1100
+  DEVICE_PACKAGES := kmod-usb-chipidea2
+  IMAGE_SIZE := 16000k
+  SUPPORTED_DEVICES += tpe-r1100
+endef
+TARGET_DEVICES += thinkpenguin_tpe-r1100
+
+define Device/thinkpenguin_tpe-r1300
+  SOC := qca9531
+  DEVICE_VENDOR := ThinkPenguin
+  DEVICE_PACKAGES := kmod-usb2
+  IMAGE_SIZE := 16000k
+  SUPPORTED_DEVICES += tpe-r1300
+  DEVICE_MODEL := TPE-R1300
+endef
+TARGET_DEVICES += thinkpenguin_tpe-r1300
+
 define Device/wallys_dr531
   SOC := qca9531
   DEVICE_VENDOR := Wallys

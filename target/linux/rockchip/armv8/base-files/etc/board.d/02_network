@@ -8,6 +8,7 @@ rockchip_setup_interfaces()
 
 	case "$board" in
 	friendlyarm,nanopi-r2s|\
+	thinkpenguin,tpe-r1400|\
 	friendlyarm,nanopi-r4s)
 		ucidef_set_interfaces_lan_wan 'eth1' 'eth0'
 		;;
@@ -55,7 +56,8 @@ rockchip_setup_macs()
 	local label_mac=""
 
 	case "$board" in
-	friendlyarm,nanopi-r2s)
+	friendlyarm,nanopi-r2s|\
+	thinkpenguin,tpe-r1400)
 		wan_mac=$(generate_mac_from_mmc_cid mmcblk0)
 		lan_mac=$(macaddr_add "$wan_mac" 1)
 		;;

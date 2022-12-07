@@ -32,3 +32,7 @@ git-src
 *.po~
 /package/luci/modules/luci-base/src/po2lmo
 /package/luci/modules/luci-base/src/jsmin
+/scripts/config/conf
+/scripts/config/mconf
+/scripts/config/mconf-cfg
+/scripts/config/mconf_check
