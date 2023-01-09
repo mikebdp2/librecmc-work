@@ -1,0 +1,23 @@
+#!/bin/sh
+
+. /lib/functions/uci-defaults.sh
+
+board_config_update
+
+case "$(board_name)" in
+"friendlyarm,nanopi-r2" \
+|"friendlyarm,nanopi-r2s" \
+|"thinkpenguin,tpe-r1400")
+    ucidef_set_interfaces_lan_wan "eth1" "eth0"
+        ;;
+"friendlyarm,nanopi-neo3")
+    ucidef_set_interface_wan 'eth0'
+    ;;
+*)
+  	ucidef_set_interface_wan 'eth0'
+        ;;
+esac
+
+board_config_flush
+
+exit 0
