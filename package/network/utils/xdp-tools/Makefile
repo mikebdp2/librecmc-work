@@ -85,8 +85,9 @@ CONFIGURE_VARS += \
 	CFLAGS="$(TARGET_CFLAGS)" \
 	LDFLAGS="$(TARGET_LDFLAGS)" \
 	CLANG="$(CLANG)" \
-	BPF_TARGET="$(BPF_TARGET)" \
-	LLC="$(LLVM_LLC)"
+	BPF_TARGET="$(BPF_ARCH)-linux-gnu" \
+	LLC="$(LLVM_LLC)" \
+	BPF_LDFLAGS="-march=$(BPF_TARGET) -mcpu=v3"
 
 MAKE_VARS += \
 	PREFIX=/usr \
@@ -94,7 +95,7 @@ MAKE_VARS += \
 
 define Build/Configure
 	$(call Build/Configure/Default)
-	echo "BPF_CFLAGS += -I$(BPF_HEADERS_DIR)/tools/lib" >> $(PKG_BUILD_DIR)/config.mk
+	echo "BPF_CFLAGS += $(BPF_CFLAGS) -Wno-error -fno-stack-protector" >> $(PKG_BUILD_DIR)/config.mk
 endef
 
 define Build/InstallDev
