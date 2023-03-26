@@ -1,6 +1,6 @@
 --- a/Makefile
 +++ b/Makefile
-@@ -653,9 +653,9 @@ KBUILD_CFLAGS	+= $(call cc-disable-warni
+@@ -660,9 +660,9 @@ KBUILD_CFLAGS	+= $(call cc-disable-warni
  KBUILD_CFLAGS	+= $(call cc-disable-warning, attribute-alias)
  
  ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
