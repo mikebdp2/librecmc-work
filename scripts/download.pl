@@ -203,6 +203,10 @@ foreach my $mirror (@ARGV) {
 		push @mirrors, "http://ftp.jaist.ac.jp/pub/apache/$1";
 		push @mirrors, "ftp://apache.cs.utah.edu/apache.org/$1";
 		push @mirrors, "ftp://apache.mirrors.ovh.net/ftp.apache.org/dist/$1";
+	} elsif ($mirror =~ /^\@DEBIAN\/(.+)$/) {
+		push @mirrors, "https://ftp.debian.org/debian/$1";
+		push @mirrors, "https://mirror.leaseweb.com/debian/$1";
+		push @mirrors, "https://mirror.netcologne.de/debian/$1";
 	} elsif ($mirror =~ /^\@GITHUB\/(.+)$/) {
 		# give github a few more tries (different mirrors)
 		for (1 .. 5) {
