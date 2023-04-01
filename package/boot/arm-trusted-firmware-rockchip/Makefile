@@ -9,12 +9,11 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=arm-trusted-firmware-rockchip
 PKG_RELEASE:=1
+PKG_VERSION:=2021-10-13-fa1e0167
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL=https://github.com/ARM-software/arm-trusted-firmware
-PKG_SOURCE_DATE:=2021-10-13
-PKG_SOURCE_VERSION:=fa1e016766fa5e289bcb0071d79dfb803d31be71
-PKG_MIRROR_HASH:=0e5b7ca16861270f6c8924c8e2451208477e38febac6a6cb0e0d4f9388122462
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-libre.tar.xz
+PKG_SOURCE_URL:=https://librecmc.org/librecmc/downloads/sources/v1.5
+PKG_HASH:=4292d29265218893b7f26c005fbb44361a667e8916ce2d940dc19617d017f8d0
 
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=license.md
