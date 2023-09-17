@@ -38,6 +38,7 @@ define Package/libustream-wolfssl
   TITLE += (wolfssl)
   DEPENDS += +PACKAGE_libustream-wolfssl:libwolfssl
   VARIANT:=wolfssl
+  DEFAULT_VARIANT:=1
 endef
 
 define Package/libustream-mbedtls
@@ -45,7 +46,6 @@ define Package/libustream-mbedtls
   TITLE += (mbedtls)
   DEPENDS += +libmbedtls
   VARIANT:=mbedtls
-  DEFAULT_VARIANT:=1
 endef
 
 ifeq ($(BUILD_VARIANT),wolfssl)
