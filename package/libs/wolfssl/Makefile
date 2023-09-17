@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=wolfssl
-PKG_VERSION:=5.5.4-stable
+PKG_VERSION:=5.6.3-stable
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/wolfSSL/wolfssl/archive/v$(PKG_VERSION)
-PKG_HASH:=b7ee150e49def77c765bc02aac92ddeb0bebefd4cb12aa263d8f95e405221fb8
+PKG_HASH:=2e74a397fa797c2902d7467d500de904907666afb4ff80f6464f6efd5afb114a
 
 PKG_FIXUP:=libtool
 PKG_INSTALL:=1
@@ -79,6 +79,7 @@ TARGET_LDFLAGS += -flto
 # --enable-stunnel needed for OpenSSL API compatibility bits
 CONFIGURE_ARGS += \
 	--enable-reproducible-build \
+	--enable-lighty \
 	--enable-opensslall \
 	--enable-opensslextra \
 	--enable-sni \
@@ -99,6 +100,7 @@ CONFIGURE_ARGS += \
 	--$(if $(CONFIG_WOLFSSL_HAS_DTLS),enable,disable)-dtls \
 	--$(if $(CONFIG_WOLFSSL_HAS_ECC25519),enable,disable)-curve25519 \
 	--$(if $(CONFIG_WOLFSSL_HAS_AFALG),enable,disable)-afalg \
+	--$(if $(CONFIG_WOLFSSL_HAS_OPENVPN),enable,disable)-openvpn \
 	--enable-devcrypto=$(if $(CONFIG_WOLFSSL_HAS_DEVCRYPTO_CBC),cbc\
 			  ,$(if $(CONFIG_WOLFSSL_HAS_DEVCRYPTO_AES),aes\
 			  ,$(if $(CONFIG_WOLFSSL_HAS_DEVCRYPTO_FULL),yes,no)))
