@@ -11,5 +11,5 @@ LUCI_DEPENDS:=+luci-base +luci-compat @BROKEN
 
 include ../../luci.mk
 
-# call BuildPackage - OpenWrt buildroot signature
+# call BuildPackage - libreCMC buildroot signature
 

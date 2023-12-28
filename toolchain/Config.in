@@ -95,6 +95,7 @@ menuconfig EXTERNAL_TOOLCHAIN
 		default "aarch64-unknown-linux-gnu"  if aarch64
 		default "aarch64_be-unknown-linux-gnu"  if aarch64_be
 		default "arm-unknown-linux-gnu"      if arm
+		default "arm-none-eabi"              if arm_m0
 		default "armeb-unknown-linux-gnu"    if armeb
 		default "i486-unknown-linux-gnu"     if i386
 		default "mips-unknown-linux-gnu"     if mips
@@ -109,13 +110,14 @@ menuconfig EXTERNAL_TOOLCHAIN
 		default "aarch64-unknown-linux-gnu"  if aarch64
 		default "aarch64_be-unknown-linux-gnu"  if aarch64_be
 		default "arm-unknown-linux-gnu-"      if arm
+		default "arm-none-eabi-"              if arm_m0
 		default "armeb-unknown-linux-gnu-"    if armeb
 		default "i486-unknown-linux-gnu-"     if i386
 		default "mips-unknown-linux-gnu-"     if mips
 		default "mipsel-unknown-linux-gnu-"   if mipsel
 		default "powerpc-unknown-linux-gnu-"  if powerpc
 		default "x86_64-unknown-linux-gnu-"   if x86_64
-
+	
 	config TOOLCHAIN_ROOT
 		string
 		prompt "Toolchain root"  if DEVEL
@@ -197,7 +199,6 @@ menuconfig EXTRA_TARGET_ARCH
 	bool
 	prompt "Enable an extra toolchain target architecture" if TOOLCHAINOPTS
 	depends on !sparc
-	default n
 	help
 	  Some builds may require a 'biarch' toolchain. This option
 	  allows you to specify an additional target arch.
@@ -247,6 +248,13 @@ comment "Binary tools"
 	depends on TOOLCHAINOPTS
 
 source "toolchain/binutils/Config.in"
+
+config DWARVES
+	bool
+	prompt "Build pahole" if TOOLCHAINOPTS
+	depends on !HOST_OS_MACOS
+	help
+	  Enable if you want to build pahole and the dwarves tools.
 
 comment "Compiler"
 	depends on TOOLCHAINOPTS

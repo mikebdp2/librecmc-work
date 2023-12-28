@@ -13,12 +13,12 @@ include $(INCLUDE_DIR)/kernel.mk
 
 
 PKG_NAME:=linux
-PKG_PATCHVER:=5.10
+PKG_PATCHVER:=5.15
 # Manually include kernel version and hash from kernel details file
 include $(INCLUDE_DIR)/kernel-$(PKG_PATCHVER)
 
 PKG_VERSION:=$(PKG_PATCHVER)$(strip $(LINUX_VERSION-$(PKG_PATCHVER)))
-PKG_SOURCE:=$(PKG_NAME)-libre-$(PKG_VERSION)-gnu$(LIBRE_REV).tar.xz
+PKG_SOURCE:=$(PKG_NAME)-libre-$(PKG_VERSION)-gnu.tar.xz
 PKG_SOURCE_URL:=$(LINUX_SITE)
 PKG_HASH:=$(LINUX_KERNEL_HASH-$(strip $(PKG_VERSION)))
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/bpf-headers/$(PKG_NAME)-$(PKG_VERSION)
@@ -56,7 +56,6 @@ KERNEL_MAKE := \
 		LLVM=1 CC="$(CLANG)" LD="$(TARGET_CROSS)ld" \
 		HOSTCC="$(HOSTCC)" \
 		HOSTCXX="$(HOSTCXX)" \
-		HOST_LOADLIBES="-L$(STAGING_DIR_HOST)/lib" \
 		KBUILD_HOSTLDLIBS="-L$(STAGING_DIR_HOST)/lib" \
 		CONFIG_SHELL="$(BASH)" \
 		INSTALL_HDR_PATH="$(PKG_BUILD_DIR)/user_headers"
@@ -65,7 +64,7 @@ define Build/Patch
 	$(Kernel/Patch/Default)
 endef
 
-BPF_DOC = $(PKG_BUILD_DIR)/scripts/bpf_helpers_doc.py
+BPF_DOC = $(PKG_BUILD_DIR)/scripts/bpf_doc.py
 
 define Build/Configure/64
 	echo 'CONFIG_CPU_MIPS64_R2=y' >> $(PKG_BUILD_DIR)/.config

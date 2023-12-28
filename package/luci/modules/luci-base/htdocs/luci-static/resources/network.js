@@ -3396,13 +3396,14 @@ WifiDevice = baseclass.extend(/** @lends LuCI.network.WifiDevice.prototype */ {
 	getI18n: function() {
 		var hw = this.ubus('dev', 'iwinfo', 'hardware'),
 		    type = L.isObject(hw) ? hw.name : null;
+		var modes = this.ubus('dev', 'iwinfo', 'hwmodes_text');
 
 		if (this.ubus('dev', 'iwinfo', 'type') == 'wl')
 			type = 'Broadcom';
 
-		return '%s 802.11%s Wireless Controller (%s)'.format(
+		return '%s %s Wireless Controller (%s)'.format(
 			type || 'Generic',
-			this.getHWModes().sort(L.naturalCompare).join(''),
+			modes ? '802.11' + modes : 'unknown',
 			this.getName());
 	},
 
@@ -3802,7 +3803,7 @@ WifiNetwork = baseclass.extend(/** @lends LuCI.network.WifiNetwork.prototype */ 
 	 *
 	 * This function actually queries the up state of the related radio
 	 * device and assumes this network to be up as well when the parent
-	 * radio is up. This is due to the fact that OpenWrt does not control
+	 * radio is up. This is due to the fact that libreCMC does not control
 	 * virtual interfaces individually but within one common hostapd
 	 * instance.
 	 *

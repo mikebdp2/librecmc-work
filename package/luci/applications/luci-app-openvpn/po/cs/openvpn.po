@@ -1,16 +1,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2020-02-02 09:02+0000\n"
-"Last-Translator: Pavel Borecki <pavel.borecki@gmail.com>\n"
-"Language-Team: Czech <https://hosted.weblate.org/projects/openwrt/"
+"PO-Revision-Date: 2023-09-18 15:45+0000\n"
+"Last-Translator: David Rapaň <david@rapan.cz>\n"
+"Language-Team: Czech <https://hosted.weblate.org/projects/librecmc/"
 "luciapplicationsopenvpn/cs/>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 3.11-dev\n"
+"X-Generator: Weblate 5.0.2\n"
 
 #: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:364
 msgid "'net30', 'p2p', or 'subnet'"
@@ -101,7 +101,7 @@ msgstr "Změnit prioritu procesu"
 msgid "Change to directory before initialization"
 msgstr "Změnit na adresář před inicializací"
 
-#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:776
+#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:780
 msgid "Check peer certificate against a CRL"
 msgstr ""
 "Zkontrolovat certifikát druhé strany proti revokačnímu seznamu certifikátů "
@@ -148,7 +148,7 @@ msgstr "Interval opakování připojení"
 
 #: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:564
 msgid "Cryptography"
-msgstr ""
+msgstr "Kryptografie"
 
 #: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:233
 msgid "Delay n seconds after connection"
@@ -188,7 +188,7 @@ msgstr "Ve skutečnosti nespouštět příkazy ifconfig/netsh"
 msgid "Don't add routes automatically"
 msgstr "Nepřidávat trasy automaticky"
 
-#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:760
+#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:764
 msgid "Don't cache --askpass or --auth-user-pass passwords"
 msgstr "Neukládat --askpass nebo --auth-user-pass passwords do mezipaměti"
 
@@ -266,6 +266,12 @@ msgstr "Zapnuto"
 msgid "Encrypt and authenticate all control channel packets with the key"
 msgstr "Šifrovat a autentizovat všechny pakety řídícího kanálu pomocí klíče"
 
+#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:756
+msgid ""
+"Encrypt and authenticate all control channel packets with the key, version 2."
+msgstr ""
+"Šifrovat a ověřovat všechny pakety ovládacího kanálu s klíčem, verze 2."
+
 #: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:622
 msgid "Encryption cipher for packets"
 msgstr "Použitá šifra pro pakety"
@@ -300,7 +306,7 @@ msgstr "Ukončit při selhání vyjednávání TLS"
 
 #: applications/luci-app-openvpn/root/usr/share/rpcd/acl.d/luci-app-openvpn.json:3
 msgid "Grant access to OpenVPN configuration"
-msgstr ""
+msgstr "Udělit oprávnění k OpenVPN konfiguraci"
 
 #: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:573
 msgid "HMAC authentication for packets"
@@ -376,7 +382,7 @@ msgstr "Maximální počet odchozích TCP paketů ve frontě"
 
 #: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:168
 msgid "Networking"
-msgstr ""
+msgstr "Síťování"
 
 #: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:447
 msgid "Number of allocated broadcast buffers"
@@ -390,7 +396,7 @@ msgstr "Počet řádků ve vyrovnávací paměti historie protokolu"
 msgid "OVPN configuration file upload"
 msgstr "Nahrání konfiguračního souboru OVPN"
 
-#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:764
+#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:768
 msgid "Only accept connections from given X509 name"
 msgstr "Přijmout pouze spojení z daného X.509 názvu"
 
@@ -514,11 +520,11 @@ msgstr "Znovuvyjednat klíč datového kanálu po n sekundách"
 msgid "Replay protection sliding window size"
 msgstr "Velikost posuvného okna ochrany proti přehrání"
 
-#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:768
+#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:772
 msgid "Require explicit designation on certificate"
 msgstr "Vyžadovat explicitní označení na certifikátu (zastaralé)"
 
-#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:772
+#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:776
 msgid "Require explicit key usage on certificate"
 msgstr "Vyžadovat explicitní označení klíče u certifikátu"
 
@@ -526,7 +532,7 @@ msgstr "Vyžadovat explicitní označení klíče u certifikátu"
 msgid "Restart after remote ping timeout"
 msgstr "Vyvolat SIGUSR1 restart pro vypršení časového limitu ping protistrany"
 
-#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:796
+#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:800
 msgid "Restrict the allowed ciphers to be negotiated"
 msgstr "Omezit povolené šifry pro vyjednání"
 
@@ -578,12 +584,16 @@ msgid ""
 "Security recommendation: It is recommended to not enable compression and set "
 "this parameter to `no`"
 msgstr ""
+"Bezpečnostní doporučení: Doporučuje se nepovolovat kompresi a nastavit tento "
+"parametr na `ne`"
 
 #: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:165
 msgid ""
 "Security recommendation: It is recommended to not enable compression and set "
 "this parameter to `stub-v2`"
 msgstr ""
+"Bezpečnostní doporučení: Doporučuje se nepovolovat kompresi a nastavit tento "
+"parametr na `stub-v2`"
 
 #: applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm:85
 msgid "Select template ..."
@@ -595,7 +605,7 @@ msgstr "Poslat protistraně oznámení při odpojení"
 
 #: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:15
 msgid "Service"
-msgstr ""
+msgstr "Služba"
 
 #: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:266
 msgid "Set TCP/UDP MTU"
@@ -747,16 +757,16 @@ msgid ""
 "configuration."
 msgstr "Konfigurační soubor OVPN (%s) nebyl nalezen, zkontrolujte konfiguraci."
 
-#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:784
+#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:788
 msgid "The highest supported TLS version"
 msgstr "Nejvyšší podporovaná verze TLS"
 
-#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:788
+#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:792
 #: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-basic.lua:69
 msgid "The key direction for 'tls-auth' and 'secret' options"
 msgstr "Směr klíče pro možnosti 'tls-auth' a 'secret'"
 
-#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:780
+#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:784
 msgid "The lowest supported TLS version"
 msgstr "Nejnižší podporovaná verze TLS"
 
@@ -768,7 +778,7 @@ msgstr ""
 "Konfigurační soubor OVPN (%s) je příliš velký pro online úpravy v LuCI (&ge; "
 "100 KB)."
 
-#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:792
+#: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:796
 msgid "This completely disables cipher negotiation"
 msgstr "Zcela zakázat vyjednání šifry"
 
@@ -783,7 +793,7 @@ msgstr "Typ použitého zařízení"
 
 #: applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm:104
 msgid "Upload"
-msgstr "Nahrát"
+msgstr "Nahráno"
 
 #: applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm:104
 msgid "Upload ovpn file"
@@ -805,7 +815,7 @@ msgstr "Použít uživatelské jméno jako Common Name"
 
 #: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:368
 msgid "VPN"
-msgstr ""
+msgstr "VPN"
 
 #: applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua:64
 msgid "Write log to file"

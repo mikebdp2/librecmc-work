@@ -7,12 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI Status Pages
-LUCI_DEPENDS:=+luci-base +libiwinfo +libiwinfo-lua
+LUCI_DEPENDS:=+luci-base +libiwinfo +rpcd-mod-iwinfo
 
+PKG_RELEASE:=2
 PKG_BUILD_DEPENDS:=iwinfo
 PKG_LICENSE:=Apache-2.0
 
 include ../../luci.mk
 
-# call BuildPackage - OpenWrt buildroot signature
+# call BuildPackage - libreCMC buildroot signature
 

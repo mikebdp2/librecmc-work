@@ -9,21 +9,22 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libqrtr-glib
 PKG_VERSION:=1.2.2
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_RELEASE:=3
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.freedesktop.org/mobile-broadband/libqrtr-glib.git
 PKG_SOURCE_VERSION:=$(PKG_VERSION)
 PKG_MIRROR_HASH:=ffb918edf96581d4ba310bd1e975297e9a7006a7e26f37934afde462585125f2
 
-PKG_MAINTAINER:=Nicholas Smith <nicholas.smith@telcoantennas.com.au>
+PKG_BUILD_FLAGS:=gc-sections
 
-PKG_INSTALL:=1
-PKG_BUILD_PARALLEL:=1
+PKG_MAINTAINER:=Nicholas Smith <nicholas.smith@telcoantennas.com.au>
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 include $(INCLUDE_DIR)/meson.mk
+
+TARGET_CFLAGS += -fno-merge-all-constants -fmerge-constants
 
 define Package/libqrtr-glib
   SECTION:=libs
@@ -41,7 +42,8 @@ endef
 
 MESON_ARGS += \
 	-Dintrospection=false \
-	-Dgtk_doc=false
+	-Dgtk_doc=false \
+	-Db_lto=true
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include

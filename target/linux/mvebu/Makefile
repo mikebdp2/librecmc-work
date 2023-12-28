@@ -9,7 +9,7 @@ BOARDNAME:=Marvell EBU Armada
 FEATURES:=fpu usb pci pcie gpio nand squashfs ramdisk boot-part rootfs-part legacy-sdcard targz
 SUBTARGETS:=cortexa9
 
-KERNEL_PATCHVER:=5.10
+KERNEL_PATCHVER:=5.15
 
 include $(INCLUDE_DIR)/target.mk
 

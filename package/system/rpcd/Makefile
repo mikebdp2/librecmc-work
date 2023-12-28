@@ -12,9 +12,9 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL=$(PROJECT_GIT)/rpcd.git
-PKG_MIRROR_HASH:=18137fa6904b1a7aec03a16a4c25fd9b9689b24ee14d431bacdda9f093339071
-PKG_SOURCE_DATE:=2022-09-21
-PKG_SOURCE_VERSION:=8c852b656bf1622dee1ae2cfa4c083f730c1c539
+PKG_MIRROR_HASH:=76467ff072b50190f93d071b7792ade7c717674397a2547e995a8f819a48954e
+PKG_SOURCE_DATE:=2023-07-01
+PKG_SOURCE_VERSION:=c07ab2f91061ad64209e9aaa1fb1b77061a1af25
 PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
 
 PKG_LICENSE:=ISC
@@ -68,8 +68,9 @@ endef
 
 
 # 1: plugin name
-# 2: extra dependencies
+# 2: additional dependencies
 # 3: plugin title/description
+# 4: extra dependencies
 define BuildPlugin
 
   PKG_CONFIG_DEPENDS += CONFIG_PACKAGE_rpcd-mod-$(1)
@@ -78,6 +79,7 @@ define BuildPlugin
     $(Package/rpcd/default)
     TITLE+= ($(1) plugin)
     DEPENDS+=rpcd $(2)
+    EXTRA_DEPENDS:=$(4)
   endef
 
   define Package/rpcd-mod-$(1)/description
@@ -101,5 +103,5 @@ endef
 $(eval $(call BuildPackage,rpcd))
 $(eval $(call BuildPlugin,file,,Provides ubus calls for file and directory operations.))
 $(eval $(call BuildPlugin,rpcsys,,Provides ubus calls for sysupgrade and password changing.))
-$(eval $(call BuildPlugin,iwinfo,+libiwinfo,Provides ubus calls for accessing iwinfo data.))
+$(eval $(call BuildPlugin,iwinfo,+libiwinfo,Provides ubus calls for accessing iwinfo data.,libiwinfo (>= 2023-01-21)))
 $(eval $(call BuildPlugin,ucode,+libucode,Allows implementing plugins using ucode scripts.))

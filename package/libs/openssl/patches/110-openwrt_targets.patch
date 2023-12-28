@@ -9,7 +9,7 @@ Signed-off-by: Eneas U de Queiroz <cote2004-github@yahoo.com>
 
 --- /dev/null
 +++ b/Configurations/25-librecmc.conf
-@@ -0,0 +1,52 @@
+@@ -0,0 +1,56 @@
 +## Openwrt "CONFIG_ARCH" matching targets.
 +
 +# The targets need to end in '-librecmc' for the AFALG patch to work
@@ -23,7 +23,7 @@ Signed-off-by: Eneas U de Queiroz <cote2004-github@yahoo.com>
 +        inherit_from    => [ "linux-aarch64", "librecmc" ],
 +    },
 +    "linux-arc-librecmc" => {
-+        inherit_from    => [ "linux-generic32", "librecmc" ],
++        inherit_from    => [ "linux-latomic", "librecmc" ],
 +    },
 +    "linux-arm-librecmc" => {
 +        inherit_from    => [ "linux-armv4", "librecmc" ],
@@ -52,6 +52,10 @@ Signed-off-by: Eneas U de Queiroz <cote2004-github@yahoo.com>
 +    "linux-powerpc64-librecmc" => {
 +        inherit_from    => [ "linux-ppc64", "librecmc" ],
 +        perlasm_scheme  => "linux64v2",
++    },
++    "linux-riscv64-librecmc" => {
++        inherit_from    => [ "linux-generic64", "librecmc" ],
++        perlasm_scheme   => "linux64",
 +    },
 +    "linux-x86_64-librecmc" => {
 +        inherit_from    => [ "linux-x86_64", "librecmc" ],

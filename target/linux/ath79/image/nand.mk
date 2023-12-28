@@ -11,6 +11,14 @@ define Build/dongwon-header
 	mv $@.tmp $@
 endef
 
+define Build/meraki-header
+        -$(STAGING_DIR_HOST)/bin/mkmerakifw \
+                -B $(1) -s \
+                -i $@ \
+                -o $@.new
+        @mv $@.new $@
+endef
+
 # attention: only zlib compression is allowed for the boot fs
 define Build/zyxel-buildkerneljffs
 	mkdir -p $@.tmp/boot
@@ -71,9 +79,6 @@ define Device/aerohive_hiveap-121
 endef
 TARGET_DEVICES += aerohive_hiveap-121
 
-
-
-
 define Device/glinet_gl-ar300m-common-nand
   SOC := qca9531
   DEVICE_VENDOR := GL.iNet
@@ -103,25 +108,6 @@ define Device/glinet_gl-ar300m-nor
 endef
 TARGET_DEVICES += glinet_gl-ar300m-nor
 
-
-
-
-define Device/glinet_gl-xe300
-  SOC := qca9531
-  DEVICE_VENDOR := GL.iNet
-  DEVICE_MODEL := GL-XE300
-  DEVICE_PACKAGES := kmod-usb2 block-mount kmod-usb-serial-ch341
-  KERNEL_SIZE := 4096k
-  IMAGE_SIZE := 131072k
-  PAGESIZE := 2048
-  VID_HDR_OFFSET := 2048
-  BLOCKSIZE := 128k
-  IMAGES += factory.img
-  IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi
-  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
-endef
-TARGET_DEVICES += glinet_gl-xe300
-
 define Device/linksys_ea4500-v3
   SOC := qca9558
   DEVICE_VENDOR := Linksys
@@ -141,7 +127,24 @@ define Device/linksys_ea4500-v3
 endef
 TARGET_DEVICES += linksys_ea4500-v3
 
-# fake rootfs is mandatory, pad-offset 129 equals (2 * uimage_header + 0xff)
+define Device/meraki_mr18
+  SOC := qca9557
+  DEVICE_VENDOR := Meraki
+  DEVICE_MODEL := MR18
+  DEVICE_PACKAGES := kmod-leds-uleds kmod-spi-gpio nu801
+  KERNEL_SIZE := 8m
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  LOADER_TYPE := bin
+  KERNEL := kernel-bin | append-dtb | lzma | loader-kernel | meraki-header MR18
+# Initramfs-build fails due to size issues
+# KERNEL_INITRAMFS := $$(KERNEL)
+  KERNEL_INITRAMFS :=
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += meraki_mr18
+
+# fake rootfs is mandatory, pad-offset 129 equals (2 * uimage_header + '\0')
 define Device/netgear_ath79_nand
   DEVICE_VENDOR := NETGEAR
   DEVICE_PACKAGES := kmod-usb2 kmod-usb-ledtrig-usbport
@@ -149,18 +152,31 @@ define Device/netgear_ath79_nand
   BLOCKSIZE := 128k
   PAGESIZE := 2048
   IMAGE_SIZE := 25600k
-  KERNEL := kernel-bin | append-dtb | lzma -d20 | \
-	pad-offset $$(KERNEL_SIZE) 129 | uImage lzma | \
-	append-string -e '\xff' | \
+  KERNEL := kernel-bin | append-dtb | lzma | \
+	pad-offset $$(BLOCKSIZE) 129 | uImage lzma | pad-extra 1 | \
 	append-uImage-fakehdr filesystem $$(UIMAGE_MAGIC)
-  KERNEL_INITRAMFS := kernel-bin | append-dtb | lzma -d20 | uImage lzma
   IMAGES := sysupgrade.bin factory.img
-  IMAGE/factory.img := append-kernel | append-ubi | netgear-dni | \
-	check-size
-  IMAGE/sysupgrade.bin := sysupgrade-tar | check-size | append-metadata
+  IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | \
+	append-ubi | check-size | netgear-dni
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
   UBINIZE_OPTS := -E 5
 endef
 
+define Device/netgear_pgzng1
+  SOC := ar9344
+  DEVICE_MODEL := PGZNG1
+  DEVICE_VENDOR := NETGEAR
+  DEVICE_ALT0_MODEL := Pulse Gateway
+  DEVICE_ALT0_VENDOR := ADT
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ledtrig-usbport kmod-i2c-gpio \
+    kmod-leds-pca955x kmod-rtc-isl1208 kmod-spi-dev
+  KERNEL_SIZE := 5120k
+  IMAGE_SIZE := 83968k
+  PAGESIZE := 2048
+  BLOCKSIZE := 128k
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += netgear_pgzng1
 
 define Device/netgear_wndr3700-v4
   SOC := ar9344
@@ -205,6 +221,9 @@ TARGET_DEVICES += netgear_wndr4300tn
 
 define Device/netgear_wndr4300-v2
   SOC := qca9563
+  DEVICE_COMPAT_VERSION := 1.1
+  DEVICE_COMPAT_MESSAGE := Partition table has been changed to fix the \
+	first reboot issue. Please reflash factory image with nmrp or tftp.
   DEVICE_MODEL := WNDR4300
   DEVICE_VARIANT := v2
   UIMAGE_MAGIC := 0x27051956
@@ -216,6 +235,9 @@ TARGET_DEVICES += netgear_wndr4300-v2
 
 define Device/netgear_wndr4500-v3
   SOC := qca9563
+  DEVICE_COMPAT_VERSION := 1.1
+  DEVICE_COMPAT_MESSAGE := Partition table has been changed to fix the \
+	first reboot issue. Please reflash factory image with nmrp or tftp.
   DEVICE_MODEL := WNDR4500
   DEVICE_VARIANT := v3
   UIMAGE_MAGIC := 0x27051956
@@ -225,8 +247,31 @@ define Device/netgear_wndr4500-v3
 endef
 TARGET_DEVICES += netgear_wndr4500-v3
 
+define Device/thinkpenguin_tpe-r1200-common-nand
+  SOC := qca9531
+  DEVICE_VENDOR := ThinkPenguin
+  DEVICE_MODEL := TPE-R1200
+  DEVICE_PACKAGES := kmod-usb2
+  KERNEL_SIZE := 4096k
+  IMAGE_SIZE := 16000k
+  PAGESIZE := 2048
+  VID_HDR_OFFSET := 2048
+endef
 
+define Device/thinkpenguin_tpe-r1200-nand
+  $(Device/thinkpenguin_tpe-r1200-common-nand)
+  DEVICE_VARIANT := NAND
+  BLOCKSIZE := 128k
+  IMAGES += factory.img
+  IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+  SUPPORTED_DEVICES += thinkpenguin,tpe-r1200-nor
+endef
+TARGET_DEVICES += thinkpenguin_tpe-r1200-nand
 
-
-
-
+define Device/thinkpenguin_tpe-r1200-nor
+  $(Device/thinkpenguin_tpe-r1200-common-nand)
+  DEVICE_VARIANT := NOR
+  SUPPORTED_DEVICES += thinkpenguin,tpe-r1200-nand tpe-r1200
+endef
+TARGET_DEVICES += thinkpenguin_tpe-r1200-nor

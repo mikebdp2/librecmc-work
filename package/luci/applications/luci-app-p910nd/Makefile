@@ -11,4 +11,4 @@ LUCI_DEPENDS:=+luci-compat +p910nd
 
 include ../../luci.mk
 
-# call BuildPackage - OpenWrt buildroot signature
+# call BuildPackage - libreCMC buildroot signature

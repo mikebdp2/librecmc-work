@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=procd
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_RELEASE:=2
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL=$(PROJECT_GIT)/procd.git
-PKG_MIRROR_HASH:=0d9b82919492e1ec0df4011b932a210b6256774d0cb1f1e3de24b6dbf36c6a77
-PKG_SOURCE_DATE:=2022-06-01
-PKG_SOURCE_VERSION:=7a0096853594874d4c60266ec338ac23728017df
+PKG_MIRROR_HASH:=a7e42525ae65eb1342e593a714e88bc59e46467cbb5a7fd7d7aca4a9815b7c0d
+PKG_SOURCE_DATE:=2023-06-25
+PKG_SOURCE_VERSION:=2db836553e8fc318143b38dbc6e12b8625cf5c33
 CMAKE_INSTALL:=1
 
 PKG_LICENSE:=GPL-2.0
@@ -22,6 +22,7 @@ PKG_LICENSE_FILES:=
 
 PKG_MAINTAINER:=John Crispin <john@phrozen.org>
 
+PKG_BUILD_FLAGS:=lto
 PKG_ASLR_PIE_REGULAR:=1
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_TARGET_INIT_PATH CONFIG_KERNEL_SECCOMP CONFIG_PROCD_SHOW_BOOT \
@@ -35,15 +36,11 @@ ifeq ($(DUMP),)
 endif
 
 CMAKE_OPTIONS += -DEARLY_PATH="$(TARGET_INIT_PATH)"
-TARGET_LDFLAGS += $(if $(CONFIG_USE_GLIBC),-lrt)
-
-TARGET_CFLAGS += -flto
-TARGET_LDFLAGS += -flto
 
 define Package/procd/Default
   SECTION:=base
   CATEGORY:=Base system
-  DEPENDS:=+ubusd +ubus +libjson-script +ubox +USE_GLIBC:librt +libubox \
+  DEPENDS:=+ubusd +ubus +libjson-script +ubox +libubox \
 	  +libubus +libblobmsg-json +libjson-c +jshn
   TITLE:=libreCMC system process manager
   USERID:=:dialout=20 :audio=29
@@ -53,6 +50,14 @@ define Package/procd
   $(call Package/procd/Default)
   VARIANT:=default
   CONFLICTS:=procd-selinux
+endef
+
+define Package/procd-selinux
+  $(call Package/procd/Default)
+  DEPENDS += +libselinux
+  TITLE += with SELinux support
+  PROVIDES:=procd
+  VARIANT:=selinux
 endef
 
 define Package/procd-ujail
@@ -80,7 +85,7 @@ endef
 
 define Package/procd/config
 menu "Configuration"
-	depends on PACKAGE_procd
+	depends on PACKAGE_procd || PACKAGE_procd-selinux
 
 config PROCD_SHOW_BOOT
 	bool
@@ -89,6 +94,10 @@ config PROCD_SHOW_BOOT
 
 endmenu
 endef
+
+ifeq ($(BUILD_VARIANT),selinux)
+  CMAKE_OPTIONS += -DSELINUX=1
+endif
 
 ifeq ($(CONFIG_PROCD_SHOW_BOOT),y)
   CMAKE_OPTIONS += -DSHOW_BOOT_ON_CONSOLE=1
@@ -111,6 +120,8 @@ define Package/procd/install
 	$(INSTALL_DATA) ./files/procd.sh $(1)/lib/functions/
 	$(INSTALL_BIN) ./files/service $(1)/sbin/service
 endef
+
+Package/procd-selinux/install = $(Package/procd/install)
 
 define Package/procd-ujail/install
 	$(INSTALL_DIR) $(1)/sbin
@@ -137,6 +148,7 @@ define Package/uxc/install
 endef
 
 $(eval $(call BuildPackage,procd))
+$(eval $(call BuildPackage,procd-selinux))
 $(eval $(call BuildPackage,procd-ujail))
 $(eval $(call BuildPackage,procd-seccomp))
 $(eval $(call BuildPackage,uxc))

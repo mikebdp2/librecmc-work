@@ -26,7 +26,7 @@ Getopt::Long::GetOptions(
 
 if ($version)
 {
-	print "makeinfo (libreCMC stub) 4.13\n";
+	print "makeinfo (libreCMC stub) 9.99\n";
 	exit 0;
 }
 

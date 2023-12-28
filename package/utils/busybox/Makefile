@@ -5,17 +5,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=busybox
-PKG_VERSION:=1.35.0
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_VERSION:=1.36.1
+PKG_RELEASE:=1
 PKG_FLAGS:=essential
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://www.busybox.net/downloads \
 		http://sources.buildroot.net
-PKG_HASH:=faeeb244c35a348a334f4a59e44626ee870fb07b6884d68c10ae8bc19f83a694
+PKG_HASH:=b8cc24c9574d809e7279c3be349795c5d5ceb6fdf19ca709f80cde50e47de314
 
 PKG_BUILD_DEPENDS:=BUSYBOX_CONFIG_PAM:libpam
 PKG_BUILD_PARALLEL:=1
+PKG_BUILD_FLAGS:=lto
 PKG_CHECK_FORMAT_SECURITY:=0
 
 PKG_LICENSE:=GPL-2.0
@@ -53,6 +54,14 @@ define Package/busybox
   VARIANT:=default
 endef
 
+define Package/busybox-selinux
+  $(call Package/busybox/Default)
+  TITLE += with SELinux support
+  DEPENDS += +libselinux
+  VARIANT:=selinux
+  PROVIDES:=busybox
+endef
+
 define Package/busybox/description
  The Swiss Army Knife of embedded Linux.
  It slices, it dices, it makes Julian Fries.
@@ -79,6 +88,7 @@ $(Package/busybox/conffiles/syslog)
 $(Package/busybox/conffiles/crond)
 endef
 
+Package/busybox-selinux/conffiles = $(Package/busybox/conffiles)
 
 ifndef CONFIG_USE_MUSL
 LDLIBS:=m crypt
@@ -90,8 +100,9 @@ ifeq ($(CONFIG_USE_GLIBC),y)
   LDLIBS += $(call BUSYBOX_IF_ENABLED,NSLOOKUP,resolv)
 endif
 
-TARGET_CFLAGS += -flto
-TARGET_LDFLAGS += -flto=jobserver -fuse-linker-plugin
+ifeq ($(BUILD_VARIANT),selinux)
+  LDLIBS += selinux sepol
+endif
 
 MAKE_VARS :=
 MAKE_FLAGS += \
@@ -109,6 +120,9 @@ define Build/Configure
 	touch $(PKG_BUILD_DIR)/.config
 ifeq ($(DEVICE_TYPE),nas)
 	echo "CONFIG_HDPARM=y" >> $(PKG_BUILD_DIR)/.config
+endif
+ifeq ($(BUILD_VARIANT),selinux)
+	cat $(TOPDIR)/$(SOURCE)/selinux.config >> $(PKG_BUILD_DIR)/.config
 endif
 	grep 'CONFIG_BUSYBOX_$(BUSYBOX_SYM)' $(TOPDIR)/.config | sed -e "s,\\(# \)\\?CONFIG_BUSYBOX_$(BUSYBOX_SYM)_\\(.*\\),\\1CONFIG_\\2,g" >> $(PKG_BUILD_DIR)/.config
 	yes 'n' | $(MAKE) -C $(PKG_BUILD_DIR) $(MAKE_FLAGS) oldconfig
@@ -142,5 +156,7 @@ endif
 	-rm -rf $(1)/lib64
 endef
 
+Package/busybox-selinux/install = $(Package/busybox/install)
 
 $(eval $(call BuildPackage,busybox))
+$(eval $(call BuildPackage,busybox-selinux))

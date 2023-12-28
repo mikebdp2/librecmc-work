@@ -105,13 +105,13 @@ return view.extend({
 		    step = (chan_graph.offsetWidth - 2) / columns,
 		    curr_offset = step;
 
-		function createGraphHLine(graph, pos) {
+		function createGraphHLine(graph, pos, width, dash) {
 			var elem = document.createElementNS('http://www.w3.org/2000/svg', 'line');
 			elem.setAttribute('x1', pos);
 			elem.setAttribute('y1', 0);
 			elem.setAttribute('x2', pos);
 			elem.setAttribute('y2', '100%');
-			elem.setAttribute('style', 'stroke:black;stroke-width:0.1');
+			elem.setAttribute('style', 'stroke:black;stroke-width:'+width+';stroke-dasharray:'+dash);
 			graph.appendChild(elem);
 		}
 
@@ -126,13 +126,21 @@ return view.extend({
 
 		chan_analysis.col_width = step;
 
-		createGraphHLine(G,curr_offset);
+		createGraphHLine(G,curr_offset, 0.1, 1);
 		for (var i=0; i< freq_tbl.length;i++) {
 			var channel = freq_tbl[i]
 			chan_analysis.offset_tbl[channel] = curr_offset+step;
 
-			createGraphHLine(G,curr_offset+step);
-			createGraphText(G,curr_offset+step, channel);
+			if (is5GHz) {
+				createGraphHLine(G,curr_offset+step, 0.1, 3);
+				if (channel < 100)
+					createGraphText(G,curr_offset-(step/2), channel);
+				else
+					createGraphText(G,curr_offset-step, channel);
+			} else {
+				createGraphHLine(G,curr_offset+step, 0.1, 0);
+				createGraphText(G,curr_offset+step, channel);
+			}
 			curr_offset += step;
 
 			if (is5GHz && freq_tbl[i+1]) {
@@ -141,28 +149,33 @@ return view.extend({
 				if ((next_channel - channel) == 4) {
 					for (var j=1; j < 4; j++) {
 						chan_analysis.offset_tbl[channel+j] = curr_offset+step;
-						createGraphHLine(G,curr_offset+step);
+						if (j == 2)
+							createGraphHLine(G,curr_offset+step, 0.1, 0);
+						else
+							createGraphHLine(G,curr_offset+step, 0.1, 1);
 						curr_offset += step;
 					}
 				} else {
 					chan_analysis.offset_tbl[channel+1] = curr_offset+step;
-					createGraphHLine(G,curr_offset+step);
+					createGraphHLine(G,curr_offset+step, 0.1, 1);
 					curr_offset += step;
 
 					chan_analysis.offset_tbl[next_channel-2] = curr_offset+step;
-					createGraphHLine(G,curr_offset+step);
+					createGraphHLine(G,curr_offset+step, 0.5, 0);
 					curr_offset += step;
 
 					chan_analysis.offset_tbl[next_channel-1] = curr_offset+step;
-					createGraphHLine(G,curr_offset+step);
+					createGraphHLine(G,curr_offset+step, 0.1, 1);
 					curr_offset += step;
 				}
 			}
 		}
-		createGraphHLine(G,curr_offset+step);
+		createGraphHLine(G,curr_offset+step, 0.1, 1);
 
 		chan_analysis.tab.addEventListener('cbi-tab-active', L.bind(function(ev) {
 			this.active_tab = ev.detail.tab;
+			if (!this.radios[this.active_tab].loadedOnce)
+				poll.start();
 		}, this));
 	},
 
@@ -170,17 +183,17 @@ return view.extend({
 		if (!this.active_tab)
 			return;
 
-		var radioDev = this.radios[this.active_tab].dev,
-		    table = this.radios[this.active_tab].table,
-		    chan_analysis = this.radios[this.active_tab].graph,
-		    scanCache = this.radios[this.active_tab].scanCache;
+		var radio = this.radios[this.active_tab];
 
 		return Promise.all([
-			radioDev.getScanList(),
-			this.callInfo(radioDev.getName())
+			radio.dev.getScanList(),
+			this.callInfo(radio.dev.getName())
 		]).then(L.bind(function(data) {
 			var results = data[0],
-			    local_wifi = data[1];
+			    local_wifi = data[1],
+			    table = radio.table,
+			    chan_analysis = radio.graph,
+			    scanCache = radio.scanCache;
 
 			var rows = [];
 
@@ -189,6 +202,7 @@ return view.extend({
 					scanCache[results[i].bssid] = {};
 
 				scanCache[results[i].bssid].data = results[i];
+				scanCache[results[i].bssid].data.stale = false;
 			}
 
 			if (scanCache[local_wifi.bssid] == null)
@@ -198,7 +212,7 @@ return view.extend({
 
 			if (chan_analysis.offset_tbl[local_wifi.channel] != null && local_wifi.center_chan1) {
 				var center_channels = [local_wifi.center_chan1],
-				    chan_width_text = local_wifi.htmode.replace(/(V)*HT/,''),
+				    chan_width_text = local_wifi.htmode.replace(/(V)*H[TE]/,''), /* Handle HT VHT HE */
 				    chan_width = parseInt(chan_width_text)/10;
 
 				if (local_wifi.center_chan2) {
@@ -224,14 +238,12 @@ return view.extend({
 			}
 
 			for (var k in scanCache)
-				if (scanCache[k].stale)
+				if (scanCache[k].data.stale)
 					results.push(scanCache[k].data);
 
 			results.sort(function(a, b) {
-				var diff = (b.quality - a.quality) || (a.channel - b.channel);
-
-				if (diff)
-					return diff;
+				if (a.channel - b.channel)
+					return 1;
 
 				if (a.ssid < b.ssid)
 					return -1;
@@ -302,10 +314,15 @@ return view.extend({
 					E('span', { 'style': s }, '%h'.format(res.bssid))
 				]);
 
-				res.stale = true;
+				scanCache[results[i].bssid].data.stale = true;
 			}
 
 			cbi_update_table(table, rows);
+
+			if (!radio.loadedOnce) {
+				radio.loadedOnce = true;
+				poll.stop();
+			}
 		}, this))
 	},
 
@@ -347,7 +364,16 @@ return view.extend({
 		var svg = data[0],
 		    wifiDevs = data[1];
 
-		var v = E('div', {}, E('div'));
+		var h2 = E('div', {'class' : 'cbi-title-section'}, [
+			E('h2', {'class': 'cbi-title-field'}, [ _('Channel Analysis') ]),
+			E('div', {'class': 'cbi-title-buttons'  }, [
+				E('button', {
+					'class': 'cbi-button cbi-button-edit',
+					'click': ui.createHandlerFn(this, 'handleScanRefresh')
+				}, [ _('Refresh Channels') ])])
+			]);
+
+		var tabs = E('div', {}, E('div'));
 
 		for (var ifname in wifiDevs) {
 			var freq_tbl = {
@@ -392,25 +418,24 @@ return view.extend({
 					dev: wifiDevs[ifname].dev,
 					graph: graph_data,
 					table: table,
-					scanCache: {}
+					scanCache: {},
+					loadedOnce: false,
 				};
 
 				cbi_update_table(table, [], E('em', { class: 'spinning' }, _('Starting wireless scan...')));
 
-				v.firstElementChild.appendChild(tab)
+				tabs.firstElementChild.appendChild(tab)
 
 				requestAnimationFrame(L.bind(this.create_channel_graph, this, graph_data, freq_tbl[freq], freq));
 			}
 		}
 
-		ui.tabs.initTabGroup(v.firstElementChild.childNodes);
+		ui.tabs.initTabGroup(tabs.firstElementChild.childNodes);
 
 		this.pollFn = L.bind(this.handleScanRefresh, this);
-
 		poll.add(this.pollFn);
-		poll.start();
 
-		return v;
+		return E('div', {}, [h2, tabs]);
 	},
 
 	handleSaveApply: null,

@@ -1,0 +1,29 @@
+--- a/arch/arm64/boot/dts/rockchip/Makefile
++++ b/arch/arm64/boot/dts/rockchip/Makefile
+@@ -16,6 +16,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-or
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-rock64.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-rock-pi-e.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-roc-cc.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-tpe-r1400.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3368-evb-act8846.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3368-geekbox.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3368-lion-haikou.dtb
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3328-tpe-r1400.dts
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/*
++ * Copyright (c) 2021 FriendlyElec Computer Tech. Co., Ltd.
++ * (http://www.friendlyarm.com)
++ *
++ * Copyright (c) 2021-2023 Tianling Shen <cnsztl@gmail.com>
++ */
++
++
++/dts-v1/;
++#include "rk3328-nanopi-r2s.dts"
++
++/ {
++	model = "ThinkPenguin TPE-R1400";
++	compatible = "thinkpenguin,tpe-r1400", "rockchip,rk3328";
++};

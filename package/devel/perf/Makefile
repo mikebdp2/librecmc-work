@@ -10,9 +10,9 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=perf
 PKG_VERSION:=$(LINUX_VERSION)
-PKG_RELEASE:=4
+PKG_RELEASE:=5
 
-PKG_USE_MIPS16:=0
+PKG_BUILD_FLAGS:=no-mips16 no-lto
 PKG_BUILD_PARALLEL:=1
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 PKG_FLAGS:=nonshared
@@ -62,7 +62,7 @@ MAKE_FLAGS = \
 	EXTRA_CFLAGS="$(TARGET_CFLAGS) $(TARGET_CPPFLAGS)" \
 	LDFLAGS="$(TARGET_LDFLAGS)" \
 	KBUILD_HOSTCFLAGS="$(HOST_CFLAGS)" \
-	$(if $(findstring c,$(OPENWRT_VERBOSE)),V=1,V='') \
+	$(if $(findstring c,$(LIBRECMC_VERBOSE)),V=1,V='') \
 	WERROR=0 \
 	O=$(PKG_BUILD_DIR) \
 	prefix=/usr

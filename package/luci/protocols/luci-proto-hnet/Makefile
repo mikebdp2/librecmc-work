@@ -14,4 +14,4 @@ PKG_MAINTAINER:=Steven Barth <steven@midlink.org>
 
 include ../../luci.mk
 
-# call BuildPackage - OpenWrt buildroot signature
+# call BuildPackage - libreCMC buildroot signature

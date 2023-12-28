@@ -12,8 +12,8 @@ LUCI_TYPE:=mod
 LUCI_BASENAME:=compat
 
 LUCI_TITLE:=LuCI compatibility libraries
-LUCI_DEPENDS:=+luci-base
+LUCI_DEPENDS:=+luci-lua-runtime
 
 include ../../luci.mk
 
-# call BuildPackage - OpenWrt buildroot signature
+# call BuildPackage - libreCMC buildroot signature

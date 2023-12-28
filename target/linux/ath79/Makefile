@@ -4,11 +4,11 @@ ARCH:=mips
 BOARD:=ath79
 BOARDNAME:=Atheros ATH79
 CPU_TYPE:=24kc
-SUBTARGETS:=generic nand
+SUBTARGETS:=generic   nand tiny
 
 FEATURES:=ramdisk squashfs usbgadget
 
-KERNEL_PATCHVER:=5.10
+KERNEL_PATCHVER:=5.15
 
 include $(INCLUDE_DIR)/target.mk
 

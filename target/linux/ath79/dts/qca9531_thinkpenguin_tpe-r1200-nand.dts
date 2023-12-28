@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+#include "qca9531_glinet_gl-ar300m.dtsi"
+
+/ {
+	compatible = "thinkpenguin,tpe-r1200-nand", "qca,qca9531";
+	model = "ThinkPenguin TPE-R1200 (NAND)";
+};
+
+&nand_kernel {
+	label = "kernel";
+};
+
+&nand_ubi {
+	label = "ubi";
+};

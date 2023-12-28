@@ -250,8 +250,8 @@ return view.extend({
 
 		if (L.hasSystemFeature('sysntpd')) {
 			var default_servers = [
-				'0.openwrt.pool.ntp.org', '1.openwrt.pool.ntp.org',
-				'2.openwrt.pool.ntp.org', '3.openwrt.pool.ntp.org'
+				'0.librecmc.pool.ntp.org', '1.librecmc.pool.ntp.org',
+				'2.librecmc.pool.ntp.org', '3.librecmc.pool.ntp.org'
 			];
 
 			o = s.taboption('timesync', form.Flag, 'enabled', _('Enable NTP client'));

@@ -11,4 +11,4 @@ LUCI_DEPENDS:=+lua +luci-lib-nixio +luci-lib-ip +luci-lib-jsonc +liblucihttp-lua
 
 include ../../luci.mk
 
-# call BuildPackage - OpenWrt buildroot signature
+# call BuildPackage - libreCMC buildroot signature

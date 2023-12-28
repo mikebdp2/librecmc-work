@@ -1,0 +1,11 @@
+#include "qca9531_glinet_gl-ar300m.dtsi"
+
+/ {
+	compatible = "thinkpenguin,tpe-r1200-nor", "qca,qca9531";
+	model = "ThinkPenguin TPE-R1200 (NOR)";
+};
+
+&nor_firmware {
+	compatible = "denx,uimage";
+	label = "firmware";
+};
