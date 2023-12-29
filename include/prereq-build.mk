@@ -145,6 +145,7 @@ $(eval $(call SetupHostCommand,perl,Please install Perl 5.x, \
 $(eval $(call CleanupPython2))
 
 $(eval $(call SetupHostCommand,python,Please install Python >= 3.5, \
+	python3.12 -V 2>&1 | grep 'Python 3', \
 	python3.11 -V 2>&1 | grep 'Python 3', \
 	python3.10 -V 2>&1 | grep 'Python 3', \
 	python3.9 -V 2>&1 | grep 'Python 3', \
