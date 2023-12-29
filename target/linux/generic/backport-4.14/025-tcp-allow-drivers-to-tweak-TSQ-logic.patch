@@ -55,7 +55,7 @@ Cc: Kir Kolyshkin <kir@openvz.org>
  	rwlock_t		sk_callback_lock;
 --- a/net/core/sock.c
 +++ b/net/core/sock.c
-@@ -2799,6 +2799,7 @@ void sock_init_data(struct socket *sock,
+@@ -2800,6 +2800,7 @@ void sock_init_data(struct socket *sock,
  
  	sk->sk_max_pacing_rate = ~0U;
  	sk->sk_pacing_rate = ~0U;
