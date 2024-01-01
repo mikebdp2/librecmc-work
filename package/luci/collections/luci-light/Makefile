@@ -14,6 +14,7 @@ LUCI_DESCRIPTION:=Light libreCMC set including admin support and the default Boo
 LUCI_DEPENDS:= \
 	+IPV6:luci-proto-ipv6 \
 	+luci-app-firewall \
+	+luci-app-opkg \
 	+luci-mod-admin-full \
 	+luci-proto-ppp \
 	+luci-theme-bootstrap \
