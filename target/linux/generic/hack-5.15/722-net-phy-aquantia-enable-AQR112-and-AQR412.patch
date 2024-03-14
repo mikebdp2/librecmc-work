@@ -15,18 +15,15 @@ Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
 
 --- a/drivers/net/phy/aquantia_main.c
 +++ b/drivers/net/phy/aquantia_main.c
-@@ -20,9 +20,11 @@
- #define PHY_ID_AQR105	0x03a1b4a2
- #define PHY_ID_AQR106	0x03a1b4d0
- #define PHY_ID_AQR107	0x03a1b4e0
-+#define PHY_ID_AQR112	0x03a1b662
- #define PHY_ID_AQR113C	0x31c31c12
+@@ -24,6 +24,8 @@
  #define PHY_ID_AQCS109	0x03a1b5c2
  #define PHY_ID_AQR405	0x03a1b4b0
-+#define PHY_ID_AQR412	0x03a1b712
  #define PHY_ID_AQR813	0x31c31cb2
++#define PHY_ID_AQR112	0x03a1b662
++#define PHY_ID_AQR412	0x03a1b712
  
  #define MDIO_PHYXS_VEND_IF_STATUS		0xe812
+ #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_MASK	GENMASK(7, 3)
 @@ -135,6 +137,29 @@
  #define AQR107_OP_IN_PROG_SLEEP		1000
  #define AQR107_OP_IN_PROG_TIMEOUT	100000
@@ -140,15 +137,12 @@ Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
  };
  
  module_phy_driver(aqr_driver);
-@@ -835,9 +929,11 @@ static struct mdio_device_id __maybe_unu
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR105) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR106) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR107) },
-+	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR112) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR113C) },
+@@ -839,6 +933,8 @@ static struct mdio_device_id __maybe_unu
  	{ PHY_ID_MATCH_MODEL(PHY_ID_AQCS109) },
  	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR405) },
-+	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR412) },
  	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR813) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR112) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR412) },
  	{ }
  };
+ 
