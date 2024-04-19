@@ -539,6 +539,7 @@ define KernelPackage/fs-nfsd
   DEPENDS:=+kmod-fs-nfs-common +kmod-fs-exportfs +kmod-fs-nfs-common-rpcsec
   KCONFIG:= \
 	CONFIG_NFSD \
+	CONFIG_NFSD_V2=n \
 	CONFIG_NFSD_V4=y \
 	CONFIG_NFSD_V4_SECURITY_LABEL=n \
 	CONFIG_NFSD_BLOCKLAYOUT=n \
