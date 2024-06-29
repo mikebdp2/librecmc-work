@@ -36,3 +36,6 @@ git-src
 /package/luci/modules/luci-base/src/po2lmo
 /scripts/config/mconf
 /scripts/config/conf
+scripts/config/mconf-cfg
+scripts/config/mconf_check
+package/luci/modules/luci-base/src/contrib/lemon
