@@ -414,6 +414,7 @@ define Device/atheros_db120
   IMAGE/factory.bin := append-kernel | pad-to $$$$(BLOCKSIZE) | \
 	append-rootfs | pad-rootfs | check-size | pad-to 6336k | \
 	append-loader-okli-uimage $(1) | pad-to 64k
+  DEFAULT := n
 endef
 TARGET_DEVICES += atheros_db120
 
@@ -562,6 +563,7 @@ define Device/comfast_cf-e120a-v3
   DEVICE_VARIANT := v3
   DEVICE_PACKAGES := rssileds -uboot-envtools
   IMAGE_SIZE := 8000k
+  DEFAULT := n
 endef
 TARGET_DEVICES += comfast_cf-e120a-v3
 
@@ -572,6 +574,7 @@ define Device/comfast_cf-e130n-v2
   DEVICE_VARIANT := v2
   DEVICE_PACKAGES := rssileds -swconfig -uboot-envtools
   IMAGE_SIZE := 7936k
+  DEFAULT := n
 endef
 TARGET_DEVICES += comfast_cf-e130n-v2
 
@@ -583,6 +586,7 @@ define Device/comfast_cf-e314n-v2
   DEVICE_VARIANT := v2
   DEVICE_PACKAGES := rssileds
   IMAGE_SIZE := 7936k
+  DEFAULT := n
 endef
 TARGET_DEVICES += comfast_cf-e314n-v2
 
@@ -701,6 +705,7 @@ define Device/dlink_dir-505
   IMAGE_SIZE := 7680k
   DEVICE_PACKAGES := kmod-usb-chipidea2
   SUPPORTED_DEVICES += dir-505-a1
+  DEFAULT := n
 endef
 TARGET_DEVICES += dlink_dir-505
 
@@ -714,6 +719,7 @@ define Device/dlink_dir-629-a1
   DEVICE_PACKAGES := -uboot-envtools
   SEAMA_MTDBLOCK := 6
   SEAMA_SIGNATURE := wrgn83_dlob.hans_dir629
+  DEFAULT := n
 endef
 TARGET_DEVICES += dlink_dir-629-a1
 
@@ -763,6 +769,7 @@ ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
 	pad-to 2 | edimax-header -b -s CSYS -m RN51 -f 0x70000 -S 0x01100000 | \
 	elecom-product-header WRC-300GHBK2-I | check-size
 endif
+  DEFAULT := n
 endef
 TARGET_DEVICES += elecom_wrc-300ghbk2-i
 
@@ -1022,6 +1029,7 @@ define Device/iodata_etg3-r
   DEVICE_MODEL := ETG3-R
   IMAGE_SIZE := 7680k
   DEVICE_PACKAGES := -iwinfo -kmod-ath9k -wpad-basic-mbedtls
+  DEFAULT := n
 endef
 TARGET_DEVICES += iodata_etg3-r
 
@@ -1112,6 +1120,7 @@ define Device/librerouter_librerouter-v1
   DEVICE_VARIANT := v1
   IMAGE_SIZE := 7936k
   DEVICE_PACKAGES := kmod-usb2
+  DEFAULT := n
 endef
 TARGET_DEVICES += librerouter_librerouter-v1
 
@@ -1172,6 +1181,7 @@ define Device/netgear_wndap360
   IMAGES := sysupgrade.bin
   IMAGE/sysupgrade.bin := append-kernel | pad-to 64k | append-rootfs | pad-rootfs | \
 	check-size | append-metadata
+  DEFAULT := n
 endef
 TARGET_DEVICES += netgear_wndap360
 
@@ -1193,6 +1203,7 @@ define Device/netgear_wndr3700
   IMAGE/factory-NA.img := $$(IMAGE/default) | netgear-dni NA | \
 	check-size
   SUPPORTED_DEVICES += wndr3700
+  DEFAULT := n
 endef
 TARGET_DEVICES += netgear_wndr3700
 
@@ -1272,6 +1283,7 @@ define Device/netgear_wnr2200-8m
   IMAGE/factory-NA.img := $$(IMAGE/default) | netgear-dni NA | \
 	check-size
   SUPPORTED_DEVICES += wnr2200
+  DEFAULT := n
 endef
 TARGET_DEVICES += netgear_wnr2200-8m
 
@@ -1482,6 +1494,7 @@ define Device/pcs_cr3000
   DEVICE_MODEL := CR3000
   IMAGE_SIZE := 7808k
   SUPPORTED_DEVICES += cr3000
+  DEFAULT := n
 endef
 TARGET_DEVICES += pcs_cr3000
 
@@ -1492,6 +1505,7 @@ define Device/pcs_cr5000
   DEVICE_PACKAGES := kmod-usb2
   IMAGE_SIZE := 7808k
   SUPPORTED_DEVICES += cr5000
+  DEFAULT := n
 endef
 TARGET_DEVICES += pcs_cr5000
 
@@ -1571,6 +1585,7 @@ define Device/qca_ap143-8m
   IMAGE/factory.bin := append-kernel | pad-to $$$$(BLOCKSIZE) | \
 	append-rootfs | pad-rootfs | check-size | pad-to 6336k | \
 	append-loader-okli-uimage $(1) | pad-to 64k
+  DEFAULT := n
 endef
 TARGET_DEVICES += qca_ap143-8m
 
@@ -1591,6 +1606,7 @@ define Device/qxwlan_e558-v2
   DEVICE_MODEL := E558
   DEVICE_PACKAGES := kmod-usb2
   SUPPORTED_DEVICES += e558-v2
+  DEFAULT := n
 endef
 
 define Device/qxwlan_e558-v2-16m
@@ -1613,6 +1629,7 @@ define Device/qxwlan_e600g-v2
   DEVICE_MODEL := E600G
   DEVICE_PACKAGES := kmod-usb2
   SUPPORTED_DEVICES += e600g-v2
+  DEFAULT := n
 endef
 
 define Device/qxwlan_e600g-v2-16m
@@ -1635,6 +1652,7 @@ define Device/qxwlan_e750a-v4
   DEVICE_MODEL := E750A
   DEVICE_PACKAGES := kmod-usb2
   SUPPORTED_DEVICES += e750a-v4
+  DEFAULT := n
 endef
 
 define Device/qxwlan_e750a-v4-16m
@@ -1657,6 +1675,7 @@ define Device/qxwlan_e750g-v8
   DEVICE_MODEL := E750G
   DEVICE_PACKAGES := kmod-usb2
   SUPPORTED_DEVICES += e750g-v8
+  DEFAULT := n
 endef
 
 define Device/qxwlan_e750g-v8-16m
@@ -1887,6 +1906,7 @@ define Device/wallys_dr531
   DEVICE_PACKAGES := kmod-usb2 rssileds
   IMAGE_SIZE := 7808k
   SUPPORTED_DEVICES += dr531
+  DEFAULT := n
 endef
 TARGET_DEVICES += wallys_dr531
 
@@ -2025,6 +2045,7 @@ define Device/zyxel_nwa1100-nh
   DEVICE_MODEL := NWA1100
   DEVICE_VARIANT := NH
   ZYXEL_MODEL_STRING := AASI
+  DEFAULT := n
 endef
 TARGET_DEVICES += zyxel_nwa1100-nh
 
@@ -2033,6 +2054,7 @@ define Device/zyxel_nwa1121-ni
   DEVICE_MODEL := NWA1121
   DEVICE_VARIANT := NI
   ZYXEL_MODEL_STRING := AABJ
+  DEFAULT := n
 endef
 TARGET_DEVICES += zyxel_nwa1121-ni
 
@@ -2041,5 +2063,6 @@ define Device/zyxel_nwa1123-ni
   DEVICE_MODEL := NWA1123
   DEVICE_VARIANT := NI
   ZYXEL_MODEL_STRING := AAEO
+  DEFAULT := n
 endef
 TARGET_DEVICES += zyxel_nwa1123-ni

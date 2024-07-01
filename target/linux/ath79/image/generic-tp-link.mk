@@ -45,6 +45,7 @@ define Device/tplink_cpe210-v1
   DEVICE_PACKAGES := rssileds
   TPLINK_BOARD_ID := CPE210
   SUPPORTED_DEVICES += cpe210
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_cpe210-v1
 
@@ -58,6 +59,7 @@ define Device/tplink_cpe210-v2
   DEVICE_PACKAGES := rssileds
   LOADER_TYPE := elf
   SUPPORTED_DEVICES += cpe210-v2
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_cpe210-v2
 
@@ -71,6 +73,7 @@ define Device/tplink_cpe210-v3
   TPLINK_BOARD_ID := CPE210V3
   LOADER_TYPE := elf
   SUPPORTED_DEVICES += cpe210-v3
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_cpe210-v3
 
@@ -82,6 +85,7 @@ define Device/tplink_cpe220-v2
   DEVICE_VARIANT := v2
   DEVICE_PACKAGES := rssileds
   TPLINK_BOARD_ID := CPE220V2
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_cpe220-v2
 
@@ -94,6 +98,7 @@ define Device/tplink_cpe220-v3
   DEVICE_PACKAGES := rssileds
   TPLINK_BOARD_ID := CPE220V3
   LOADER_TYPE := elf
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_cpe220-v3
 
@@ -106,6 +111,7 @@ define Device/tplink_cpe510-v1
   DEVICE_PACKAGES := rssileds
   TPLINK_BOARD_ID := CPE510
   SUPPORTED_DEVICES += cpe510
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_cpe510-v1
 
@@ -118,6 +124,7 @@ define Device/tplink_cpe510-v2
   DEVICE_PACKAGES := rssileds
   TPLINK_BOARD_ID := CPE510V2
   SUPPORTED_DEVICES += cpe510-v2
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_cpe510-v2
 
@@ -129,6 +136,7 @@ define Device/tplink_cpe510-v3
   DEVICE_VARIANT := v3
   DEVICE_PACKAGES := rssileds
   TPLINK_BOARD_ID := CPE510V3
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_cpe510-v3
 
@@ -139,6 +147,7 @@ define Device/tplink_cpe605-v1
   DEVICE_MODEL := CPE605
   DEVICE_VARIANT := v1
   TPLINK_BOARD_ID := CPE605V1
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_cpe605-v1
 
@@ -149,6 +158,7 @@ define Device/tplink_cpe610-v1
   DEVICE_MODEL := CPE610
   DEVICE_VARIANT := v1
   TPLINK_BOARD_ID := CPE610V1
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_cpe610-v1
 
@@ -159,6 +169,7 @@ define Device/tplink_cpe610-v2
   DEVICE_MODEL := CPE610
   DEVICE_VARIANT := v2
   TPLINK_BOARD_ID := CPE610V2
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_cpe610-v2
 
@@ -329,6 +340,7 @@ define Device/tplink_tl-wr2543-v1
 	check-size | append-metadata
   IMAGE/factory.bin := tplink-v1-image factory -v 3.13.99
   SUPPORTED_DEVICES += tl-wr2543n
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_tl-wr2543-v1
 
@@ -440,6 +452,7 @@ define Device/tplink_tl-wr941hp-v1
   DEVICE_VARIANT := v1
   TPLINK_BOARD_ID := TL-WR941HP-V1
   IMAGE_SIZE := 7360k
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_tl-wr941hp-v1
 
@@ -452,6 +465,7 @@ define Device/tplink_wbs210-v1
   DEVICE_PACKAGES := rssileds
   TPLINK_BOARD_ID := WBS210
   SUPPORTED_DEVICES += wbs210
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_wbs210-v1
 
@@ -463,6 +477,7 @@ define Device/tplink_wbs210-v2
   DEVICE_VARIANT := v2
   DEVICE_PACKAGES := rssileds
   TPLINK_BOARD_ID := WBS210V2
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_wbs210-v2
 
@@ -475,6 +490,7 @@ define Device/tplink_wbs510-v1
   DEVICE_PACKAGES := rssileds
   TPLINK_BOARD_ID := WBS510
   SUPPORTED_DEVICES += wbs510
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_wbs510-v1
 
@@ -486,5 +502,6 @@ define Device/tplink_wbs510-v2
   DEVICE_VARIANT := v2
   DEVICE_PACKAGES := rssileds
   TPLINK_BOARD_ID := WBS510V2
+  DEFAULT := n
 endef
 TARGET_DEVICES += tplink_wbs510-v2
