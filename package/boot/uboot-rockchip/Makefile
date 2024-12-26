@@ -102,6 +102,13 @@ define U-Boot/rockpro64-rk3399
     pine64_rockpro64
 endef
 
+define U-Boot/tpe-r1500-rk3399
+  $(U-Boot/rk3399/Default)
+  NAME:=TPE-R1500
+  BUILD_DEVICES:= \
+    thinkpenguin_tpe-r1500
+endef
+
 UBOOT_TARGETS := \
   nanopi-r4s-rk3399 \
   rock-pi-4-rk3399 \
@@ -111,7 +118,8 @@ UBOOT_TARGETS := \
   orangepi-r1-plus-rk3328 \
   orangepi-r1-plus-lts-rk3328 \
   roc-cc-rk3328 \
-  tpe-r1400-rk3328
+  tpe-r1400-rk3328 \
+  tpe-r1500-rk3399
 
 UBOOT_CONFIGURE_VARS += USE_PRIVATE_LIBGCC=yes
 

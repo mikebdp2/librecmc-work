@@ -12,6 +12,7 @@ friendlyarm,nanopi-r2c|\
 friendlyarm,nanopi-r2s|\
 friendlyarm,nanopi-r4s|\
 thinkpenguin,tpe-r1400|\
+thinkpenguin,tpe-r1500|\
 xunlong,orangepi-r1-plus|\
 xunlong,orangepi-r1-plus-lts)
 	ucidef_set_led_netdev "wan" "WAN" "green:wan" "eth0"

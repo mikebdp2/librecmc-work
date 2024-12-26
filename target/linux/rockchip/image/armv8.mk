@@ -70,6 +70,16 @@ define Device/thinkpenguin_tpe-r1400
 endef
 TARGET_DEVICES += thinkpenguin_tpe-r1400
 
+define Device/thinkpenguin_tpe-r1500
+  DEVICE_VENDOR := ThinkPenguin
+  DEVICE_MODEL := TPE-R1500
+  DEVICE_VARIANT := 4GB LPDDR4
+  SOC := rk3399
+  IMAGE/sysupgrade.img.gz := boot-common | boot-script | pine64-img | gzip | append-metadata
+  DEVICE_PACKAGES := kmod-r8169
+endef
+TARGET_DEVICES += thinkpenguin_tpe-r1500
+
 define Device/xunlong_orangepi-r1-plus
   DEVICE_VENDOR := Xunlong
   DEVICE_MODEL := Orange Pi R1 Plus
