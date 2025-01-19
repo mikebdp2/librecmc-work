@@ -10,18 +10,16 @@ devices the project supports.
 
 ## Useful links:
 
-* [libreCMC FAQ](docs/FAQ.md) : WIP
+* [Build Documentation](https://gogs.librecmc.org/libreCMC/libreCMC/wiki/How_To_Build_libreCMC) : Learn how to build libreCMC for your device.
 
-* [Getting Started with libreCMC]() : WIP
+* [Supported Hardware](https://gogs.librecmc.org/libreCMC/libreCMC/wiki/Supported_Hardware): Devices officially supported by libreCMC.
 
-* [Supported Hardware](docs/Supported_Hardware.md): Devices officially supported by libreCMC.
+* Get the latest [releases](https://gogs.librecmc.org/libreCMC/libreCMC/wiki/Releases) of libreCMC.
 
-* [Router reset instructions](docs/Router_Reset_Instructions.md) : Generic libreCMC router reset instructions.
+* [Router reset instructions](https://gogs.librecmc.org/libreCMC/libreCMC/wiki/Router_Reset_Instructions) : Generic libreCMC router reset instructions.
 
 * [Report a bug or issue](https://gogs.librecmc.org/libreCMC/libreCMC/issues) : Is
   something broken? Did you find a non-free component or do you want
   to make libreCMC better? Submit an issue.
 
 * [Get libreCMC source code](https://gogs.librecmc.org/libreCMC/libreCMC) : Checkout the latest libreCMC sources.
-
-* [Build Documentation](docs/How_To_Build_libreCMC.md) : Learn how to build libreCMC for your device. 
