@@ -24,6 +24,8 @@ TAR_OPTIONS+=--transform=s/^squashfs/$(PKG_NAME)-/
 
 include $(INCLUDE_DIR)/host-build.mk
 
+HOST_CFLAGS +=-std=gnu17
+
 define Host/Compile
 	$(MAKE) -C $(HOST_BUILD_DIR)/squashfs-tools \
 		CC="$(HOSTCC)" \
