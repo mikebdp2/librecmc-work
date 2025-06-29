@@ -70,7 +70,10 @@ endef
 
 export GNULIB_SRCDIR:=$(HOST_GNULIB_SRCDIR)
 
+HOST_CFLAGS += -std=gnu17
+
 TARGET_CFLAGS += $(FPIC)
+
 ifneq ($(HOST_OS),Linux)
   TARGET_CFLAGS += -I$(STAGING_DIR_HOSTPKG)/include
 endif

@@ -57,6 +57,8 @@ define Package/iconv
   TITLE+= utility
 endef
 
+HOST_CFLAGS +=-std=gnu17
+
 CONFIGURE_ARGS += \
 	--enable-shared \
 	--enable-static \

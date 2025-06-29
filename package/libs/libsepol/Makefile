@@ -45,6 +45,8 @@ define Package/chkcon/description
 	chkcon - determine if a security context is valid for a given binary policy
 endef
 
+HOST_CFLAGS += -std=gnu17
+
 HOST_MAKE_FLAGS += \
 	PREFIX=$(STAGING_DIR_HOSTPKG) \
 	SHLIBDIR=$(STAGING_DIR_HOSTPKG)/lib

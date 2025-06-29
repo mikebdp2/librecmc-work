@@ -34,7 +34,7 @@ HOST_CONFIGURE_ARGS += --disable-symvers
 endif
 
 TARGET_CFLAGS += -DGQ
-HOST_CFLAGS += -DGQ
+HOST_CFLAGS += -DGQ -std=gnu17
 
 define Package/libtirpc/install
 	$(INSTALL_DIR) $(1)/usr/lib
