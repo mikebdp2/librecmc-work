@@ -20,7 +20,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  
  /**
   *	napi_disable - prevent NAPI from scheduling
-@@ -3371,6 +3372,7 @@ struct softnet_data {
+@@ -3380,6 +3381,7 @@ struct softnet_data {
  	unsigned int		processed;
  	unsigned int		time_squeeze;
  	unsigned int		received_rps;
