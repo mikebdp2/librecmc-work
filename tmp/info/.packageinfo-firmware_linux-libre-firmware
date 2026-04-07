@@ -1,0 +1,40 @@
+Source-Makefile: package/firmware/linux-libre-firmware/Makefile
+Build-Types: host
+
+Package: ath9k-htc-firmware
+Version: 2018-02-12-413eefe5a96584139ffc0b95b3e220d85abe36b2-1
+Depends: +libc 
+Conflicts: 
+Menu-Depends: 
+Provides: 
+Section: firmware
+Category: Firmware
+Repository: base
+Title: AR9271/AR7010 firmware
+Maintainer: 
+Source: linux-libre-firmware-2018-02-12-413eefe5a96584139ffc0b95b3e220d85abe36b2.tar.xz
+Type: ipkg
+Description: AR9271/AR7010 firmware
+https://gogs.librecmc.org/libreCMC/libre_firmware.git
+
+@@
+
+Package: carl9170-firmware
+Version: 2018-02-12-413eefe5a96584139ffc0b95b3e220d85abe36b2-1
+Depends: +libc 
+Conflicts: 
+Menu-Depends: 
+Provides: 
+Section: firmware
+Category: Firmware
+Repository: base
+Title: AR9170 firmware
+Maintainer: 
+Source: linux-libre-firmware-2018-02-12-413eefe5a96584139ffc0b95b3e220d85abe36b2.tar.xz
+Type: ipkg
+Description: AR9170 firmware
+https://gogs.librecmc.org/libreCMC/libre_firmware.git
+
+@@
+
+

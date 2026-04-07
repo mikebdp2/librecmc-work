@@ -1,0 +1,24 @@
+Source-Makefile: package/luci/protocols/luci-proto-hnet/Makefile
+Build-Depends: lua/host luci-base/host LUCI_CSSTIDY:csstidy/host LUCI_SRCDIET:luasrcdiet/host 
+
+Package: luci-proto-hnet
+Submenu: 5. Protocols
+Version: x
+Depends: +libc 
+Conflicts: 
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Repository: base
+Title: Support for hnet
+Maintainer: libreCMC LuCI community
+Source: 
+License: Apache-2.0
+Type: ipkg
+Description: Support for hnet
+https://github.com/librecmc/luci
+libreCMC LuCI community
+@@
+
+

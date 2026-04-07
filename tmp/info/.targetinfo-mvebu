@@ -1,0 +1,200 @@
+Source-Makefile: target/linux/mvebu/Makefile
+Target: mvebu
+Target-Board: mvebu
+Target-Name: Marvell EBU Armada
+Target-Arch: 
+Target-Arch-Packages: 
+Target-Features: arm_v7 boot-part dt fpu gpio legacy-sdcard nand pci pcie ramdisk rootfs-part rtc squashfs targz usb
+Target-Depends: 
+Target-Optimization: -Os -pipe
+CPU-Type: 
+Linux-Version: 5.15.202
+Linux-Release: 1
+Linux-Kernel-Arch: arm64
+Target-Description:
+
+@@
+Default-Packages: base-files ca-bundle dropbear fstools libc libgcc libustream-wolfssl logd mtd netifd opkg uci uclient-fetch urandom-seed urngd busybox procd procd-ujail dnsmasq firewall4 nftables kmod-nft-offload odhcp6c odhcpd-ipv6only ppp ppp-mod-pppoe uboot-envtools kmod-gpio-button-hotplug 
+make[3]: Entering directory '/home/anon/librecmc-work/target/linux/mvebu'
+Target: mvebu/cortexa9
+Target-Board: mvebu
+Target-Name: Marvell Armada 37x/38x/XP
+Target-Arch: arm
+Target-Arch-Packages: arm_cortex-a9_vfpv3-d16
+Target-Features: arm_v7 boot-part dt fpu gpio legacy-sdcard nand pci pcie ramdisk rootfs-part rtc squashfs targz usb
+Target-Depends: 
+Target-Optimization: -Os -pipe
+CPU-Type: cortex-a9+vfpv3-d16
+Linux-Version: 5.15.202
+Linux-Release: 1
+Linux-Kernel-Arch: arm
+Target-Description:
+
+@@
+Default-Packages: base-files ca-bundle dropbear fstools libc libgcc libustream-wolfssl logd mtd netifd opkg uci uclient-fetch urandom-seed urngd busybox procd procd-ujail dnsmasq firewall4 nftables kmod-nft-offload odhcp6c odhcpd-ipv6only ppp ppp-mod-pppoe uboot-envtools kmod-gpio-button-hotplug 
+Target-Profile: DEVICE_buffalo_ls220de
+Target-Profile-Name: Buffalo LinkStation LS220DE
+Target-Profile-Packages: kmod-hwmon-gpiofan kmod-hwmon-drivetemp kmod-linkstation-poweroff kmod-md-mod kmod-md-raid0 kmod-md-raid1 kmod-md-raid10 kmod-fs-xfs mdadm mkf2fs e2fsprogs partx-utils
+Target-Profile-hasImageMetadata: 1
+Target-Profile-SupportedDevices: buffalo,ls220de
+
+
+Target-Profile-Description:
+Build firmware images for Buffalo LinkStation LS220DE
+
+
+
+
+
+@@
+
+Target-Profile: DEVICE_buffalo_ls421de
+Target-Profile-Name: Buffalo LinkStation LS421DE
+Target-Profile-Packages: kmod-rtc-rs5c372a kmod-hwmon-gpiofan kmod-hwmon-drivetemp kmod-usb3 kmod-linkstation-poweroff kmod-md-raid0 kmod-md-raid1 kmod-md-mod kmod-fs-xfs mkf2fs e2fsprogs partx-utils
+Target-Profile-hasImageMetadata: 1
+Target-Profile-SupportedDevices: buffalo,ls421de
+
+
+Target-Profile-Description:
+Build firmware images for Buffalo LinkStation LS421DE
+
+
+
+
+
+@@
+
+Target-Profile: DEVICE_ctera_c200-v2
+Target-Profile-Name: Ctera C200 V2
+Target-Profile-Packages: kmod-gpio-button-hotplug kmod-hwmon-drivetemp kmod-hwmon-nct7802 kmod-rtc-s35390a kmod-usb3 kmod-usb-ledtrig-usbport
+Target-Profile-hasImageMetadata: 1
+Target-Profile-SupportedDevices: ctera,c200-v2
+
+
+Target-Profile-Description:
+Build firmware images for Ctera C200 V2
+
+
+
+
+
+@@
+
+Target-Profile: DEVICE_cznic_turris-omnia
+Target-Profile-Name: CZ.NIC Turris Omnia
+Target-Profile-Packages: mkf2fs e2fsprogs kmod-fs-vfat kmod-nls-cp437 kmod-nls-iso8859-1 wpad-basic-wolfssl kmod-ath9k partx-utils kmod-i2c-mux-pca954x kmod-leds-turris-omnia iwinfo
+Target-Profile-hasImageMetadata: 1
+Target-Profile-SupportedDevices: cznic,turris-omnia armada-385-turris-omnia
+
+
+Target-Profile-Description:
+Build firmware images for CZ.NIC Turris Omnia
+
+
+
+
+
+@@
+
+Target-Profile: DEVICE_iptime_nas1dual
+Target-Profile-Name: ipTIME NAS1dual
+Target-Profile-Packages: kmod-hwmon-drivetemp kmod-hwmon-gpiofan kmod-usb3
+Target-Profile-hasImageMetadata: 1
+Target-Profile-SupportedDevices: iptime,nas1dual
+
+
+Target-Profile-Description:
+Build firmware images for ipTIME NAS1dual
+
+
+
+
+
+@@
+
+Target-Profile: DEVICE_kobol_helios4
+Target-Profile-Name: Kobol Helios4
+Target-Profile-Packages: mkf2fs e2fsprogs partx-utils
+Target-Profile-hasImageMetadata: 1
+Target-Profile-SupportedDevices: kobol,helios4
+
+
+Target-Profile-Description:
+Build firmware images for Kobol Helios4
+
+
+
+
+
+@@
+
+Target-Profile: DEVICE_linksys_wrt1200ac
+Target-Profile-Name: Linksys Caiman (Linksys WRT1200AC)
+Target-Profile-Packages: kmod-mwlwifi wpad-basic-wolfssl mwlwifi-firmware-88w8864 iwinfo
+Target-Profile-hasImageMetadata: 1
+Target-Profile-SupportedDevices: linksys,wrt1200ac armada-385-linksys-caiman linksys,caiman
+
+
+Target-Profile-Description:
+Build firmware images for Linksys WRT1200AC
+Alternative device titles:
+- Linksys Caiman
+
+
+
+
+@@
+
+Target-Profile: DEVICE_linksys_wrt1200ac
+Target-Profile-Name: Linksys WRT1200AC
+Target-Profile-Packages: kmod-mwlwifi wpad-basic-wolfssl mwlwifi-firmware-88w8864 iwinfo
+Target-Profile-hasImageMetadata: 1
+Target-Profile-SupportedDevices: linksys,wrt1200ac armada-385-linksys-caiman linksys,caiman
+
+
+Target-Profile-Description:
+Build firmware images for Linksys WRT1200AC
+Alternative device titles:
+- Linksys Caiman
+
+
+
+
+@@
+
+Target-Profile: DEVICE_linksys_wrt1900ac-v1
+Target-Profile-Name: Linksys Mamba (Linksys WRT1900AC v1)
+Target-Profile-Packages: kmod-mwlwifi wpad-basic-wolfssl iwinfo
+Target-Profile-hasImageMetadata: 1
+Target-Profile-SupportedDevices: linksys,wrt1900ac-v1 armada-xp-linksys-mamba linksys,mamba
+
+
+Target-Profile-Description:
+Build firmware images for Linksys WRT1900AC v1
+Alternative device titles:
+- Linksys Mamba
+
+
+
+
+@@
+
+Target-Profile: DEVICE_linksys_wrt1900ac-v1
+Target-Profile-Name: Linksys WRT1900AC v1
+Target-Profile-Packages: kmod-mwlwifi wpad-basic-wolfssl iwinfo
+Target-Profile-hasImageMetadata: 1
+Target-Profile-SupportedDevices: linksys,wrt1900ac-v1 armada-xp-linksys-mamba linksys,mamba
+
+
+Target-Profile-Description:
+Build firmware images for Linksys WRT1900AC v1
+Alternative device titles:
+- Linksys Mamba
+
+
+
+
+@@
+
+make[3]: Leaving directory '/home/anon/librecmc-work/target/linux/mvebu'
+

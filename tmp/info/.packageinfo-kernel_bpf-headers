@@ -1,0 +1,22 @@
+Source-Makefile: package/kernel/bpf-headers/Makefile
+
+Package: bpf-headers
+Version: 5.15.202
+Depends: +libc 
+Conflicts: 
+Menu-Depends: 
+Provides: 
+Section: kernel
+Category: Kernel modules
+Repository: base
+Title: eBPF kernel headers
+Maintainer: 
+Source: linux-libre-5.15.202-gnu.tar.xz
+Type: ipkg
+Build-Only: 1
+Hidden: 1
+Description: eBPF kernel headers
+
+@@
+
+

@@ -1,0 +1,22 @@
+Source-Makefile: package/system/librecmc-keyring/Makefile
+
+Package: librecmc-keyring
+Version: 2017-07-05-f701477b2bf1f733fe3a450de302dd2c21fab3d0-1
+Depends: +libc 
+Conflicts: 
+Menu-Depends: 
+Provides: 
+Section: base
+Category: Base system
+Repository: base
+Title: libreCMC Developer Keyring
+Maintainer: Robert Call <bob@librecmc.org>
+Source: librecmc-keyring-2017-07-05-f701477b2bf1f733fe3a450de302dd2c21fab3d0.tar.xz
+License: GPL-2.0
+Type: ipkg
+Description:   The libreCMC developer keyring containing developer usign and gpg public keys.
+https://librecmc.org
+Robert Call <bob@librecmc.org>
+@@
+
+

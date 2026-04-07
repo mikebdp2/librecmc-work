@@ -1,0 +1,6 @@
+$(eval $(call PackageDir,ath79,ath79,))
+$(eval $(call PackageDir,mvebu,mvebu,))
+$(eval $(call PackageDir,rockchip,rockchip,))
+$(eval $(call PackageDir,sunxi,sunxi,))
+$(eval $(call PackageDir,uml,uml,))
+$(eval $(call PackageDir,x86,x86,))

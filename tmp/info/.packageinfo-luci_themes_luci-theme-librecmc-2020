@@ -1,0 +1,23 @@
+Source-Makefile: package/luci/themes/luci-theme-librecmc-2020/Makefile
+Build-Depends: lua/host luci-base/host LUCI_CSSTIDY:csstidy/host LUCI_SRCDIET:luasrcdiet/host 
+
+Package: luci-theme-librecmc-2020
+Submenu: 4. Themes
+Version: x
+Depends: +libc 
+Conflicts: 
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Repository: base
+Title: LuCI modern libreCMC theme
+Maintainer: libreCMC LuCI community
+Source: 
+Type: ipkg
+Description: LuCI modern libreCMC theme
+https://github.com/librecmc/luci
+libreCMC LuCI community
+@@
+
+
